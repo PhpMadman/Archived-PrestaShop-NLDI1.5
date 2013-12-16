@@ -1,0 +1,250 @@
+/*** ESSENTIAL STYLES ***/
+.sf-contener {
+	clear: both;
+}
+.sf-right {
+  margin-right: 14px;
+  float: right;
+  width: 7px;
+}
+.sf-menu, .sf-menu * {
+	margin:			0;
+	padding:		0;
+	list-style:		none;
+}
+.sf-menu {
+	margin: 10px 0;
+	padding:0;
+	width:100%;/* 980 */
+/* 	background:#3B3B3B; */
+background: #2b2b2b; /* Old browsers */
+background: -moz-linear-gradient(top,  #2b2b2b 0%, #565656 50%, #595959 51%, #2b2b2b 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#2b2b2b), color-stop(50%,#565656), color-stop(51%,#595959), color-stop(100%,#2b2b2b)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  #2b2b2b 0%,#565656 50%,#595959 51%,#2b2b2b 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  #2b2b2b 0%,#565656 50%,#595959 51%,#2b2b2b 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  #2b2b2b 0%,#565656 50%,#595959 51%,#2b2b2b 100%); /* IE10+ */
+background: linear-gradient(to bottom,  #2b2b2b 0%,#565656 50%,#595959 51%,#2b2b2b 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2b2b2b', endColorstr='#2b2b2b',GradientType=0 ); /* IE6-9 */
+
+	border-radius: 5px;
+-moz-box-shadow: 1px 1px 3px #000000;
+-webkit-box-shadow: 1px 1px 3px #000000;
+box-shadow: 1px 1px 3px #000000;
+/* For IE 8 */
+-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=2, Direction=135, Color='#000000')";
+/* For IE 5.5 - 7 */
+filter: progid:DXImageTransform.Microsoft.Shadow(Strength=2, Direction=135, Color='#000000');
+height: 45px;
+border-bottom: 1px solid #aaaaaa;
+border-top: 2px solid #aaaaaa;
+}
+.sf-menu ul {
+	position:		absolute;
+	top:			-999em;
+	width:			10em; /* left offset of submenus need to match (see below) */
+}
+.sf-menu ul li {
+	width:			100%;
+}
+.sf-menu li:hover {
+	visibility:		inherit; /* fixes IE7 'sticky bug' */
+}
+.sf-menu li {
+	float:			left;
+	position:		relative;
+/* 	border-right: 1px #cccccc solid; */
+/* 	border-right: 1px solid rgba(0,80,255,1); */
+}
+.sf-menu a {
+	display:		block;
+	position:		relative;
+	color:#ffffff;
+	text-shadow:0 1px 0 #333;
+	border-right: 1px solid #ffffff;
+}
+.sf-menu li:hover ul,
+.sf-menu li.sfHover ul {
+	left:			0;
+	top:			34px; /* match top ul list item height */
+	z-index:		99;
+	width:auto
+}
+ul.sf-menu li:hover li ul,
+ul.sf-menu li.sfHover li ul {
+	top:			-999em;
+}
+ul.sf-menu li li:hover ul,
+ul.sf-menu li li.sfHover ul {
+	left:			200px; /* match ul width */
+	top:			0;
+}
+ul.sf-menu li li:hover li ul,
+ul.sf-menu li li.sfHover li ul {
+	top:			-999em;
+}
+ul.sf-menu li li li:hover ul,
+ul.sf-menu li li li.sfHover ul {
+	left:			200px; /* match ul width */
+	top:			0;
+}
+
+/* block top search */
+#search_block_top .search_pop_text {
+	font-size:12px;
+/* 	line-height:15px; */
+	float: left;
+	color: #FFFFFF;
+	margin-left: -95px;
+}
+#search_block_top .search_pop_link {
+	font-size:12px;
+	line-height:15px;
+}
+#search_block_top {
+	float: right;
+	margin-right: 10px;
+	border:0;
+}
+#search_block_top p {padding:0;}
+#search_block_top #search_query_top {
+	padding:0 5px;
+	height:23px;
+	width:300px;/* 310 */
+	border:1px solid #666;
+	border-right: 0 !important;
+	color:#666;
+	background:url(../img/bg_search_input.png) repeat-x 0 0 #fff;
+/* 	float: left; */
+}
+
+#search_block_top .button {
+/* 	border:none; */
+	border:none;
+	border-radius:0;
+	color:#ffffff;
+	text-transform:uppercase;
+	background:url(../img/bg_search_submit.png) repeat-x 0 0 #101010;
+/* 	float: left; */
+	height: 25px;
+}
+
+form#searchbox{padding-top:7px}
+form#searchbox label{color:#333;margin-bottom:1px}
+form#searchbox input#search_query_block{
+	border: 1px solid #CCCCCC;
+	-webkit-border-radius:3px !important;
+	-moz-border-radius:3px !important;
+	border-radius:3px !important;
+	height: 18px;
+	margin-top:10px;
+}
+form#searchbox input#search_button{padding: 1px 4px;}
+
+
+
+/*** DEMO SKIN ***/
+.sf-menu {
+	float:			left;
+	margin-bottom:	1em;
+}
+.sf-menu a {
+	display:block;
+	margin-left:10px;
+	padding: 0 5px 0 5px;
+	line-height:45px;
+	font-weight: bold;
+/* 	border: 0; */
+	text-decoration:none;
+}
+.sf-menu a, .sf-menu a:visited  { /* visited pseudo selector so IE6 applies text colour*/
+	font-size: 14px;
+	color: #ffffff;
+	white-space:nowrap;
+}
+.sf-menu li li {
+	background: rgba(113, 113, 113, 0.9);
+}
+.sf-menu li li li {
+	background:	rgba(113, 113, 113, 0.9);
+}
+.sf-menu a:focus, .sf-menu a:hover, .sf-menu a:active {
+	font-size:18px;
+}
+.sf-menu ul li:hover, .sf-menu ul li.sfHover,
+.sf-menu ul li a:focus, .sf-menu ul li a:hover, .sf-menu ul li a:active {
+	background:		#4e4e4e;
+	outline:		0;
+}
+/*** arrows **/
+.sf-menu a.sf-with-ul {
+	padding-right: 	2.25em;
+	min-width:		1px; /* trigger IE7 hasLayout so spans position accurately */
+}
+.sf-sub-indicator {
+	position:		absolute;
+	display:		block;
+	right:			10px;
+	top:			1.05em; /* IE6 only */
+	width:			10px;
+	height:			10px;
+	text-indent: 	-999em;
+	overflow:		hidden;
+	background:		url('../img/arrows-ffffff.png') no-repeat -10px -100px; /* 8-bit indexed alpha png. IE6 gets solid image only */
+}
+a > .sf-sub-indicator {  /* give all except IE6 the correct values */
+	top: 11px;
+	background-position: 0 -100px; /* use translucent arrow for modern browsers*/
+}
+/* apply hovers to modern browsers */
+a:focus > .sf-sub-indicator,
+a:hover > .sf-sub-indicator,
+a:active > .sf-sub-indicator,
+li:hover > a > .sf-sub-indicator,
+li.sfHover > a > .sf-sub-indicator {
+	background-position: -10px -100px; /* arrow hovers for modern browsers*/
+}
+
+/* point right for anchors in subs */
+.sf-menu ul .sf-sub-indicator { background-position:  -10px 0; }
+.sf-menu ul a > .sf-sub-indicator { background-position:  0 0; }
+/* apply hovers to modern browsers */
+.sf-menu ul a:focus > .sf-sub-indicator,
+.sf-menu ul a:hover > .sf-sub-indicator,
+.sf-menu ul a:active > .sf-sub-indicator,
+.sf-menu ul li:hover > a > .sf-sub-indicator,
+.sf-menu ul li.sfHover > a > .sf-sub-indicator {
+	background-position: -10px 0; /* arrow hovers for modern browsers*/
+}
+
+/*** shadows for all but IE6 ***/
+.sf-shadow ul {
+	background:	url('../img/shadow.png') no-repeat bottom right;
+	padding: 0 8px 9px 0;
+	-moz-border-bottom-left-radius: 17px;
+	-moz-border-top-right-radius: 17px;
+	-webkit-border-top-right-radius: 17px;
+	-webkit-border-bottom-left-radius: 17px;
+}
+.sf-shadow ul.sf-shadow-off {
+	background: transparent;
+}
+li.sf-search {
+  background: inherit;
+  float: right;
+  line-height: 25px;
+}
+li.sf-search input {
+  -moz-border-radius: 0 5px 5px 0;
+  padding: 3px 0;
+  padding-left: 20px;
+  margin: 6px 6px 0 0;
+  background: #fff url('../img/search.gif') no-repeat left center;
+  border:1px solid #777
+}
+
+/* hack IE7 */
+.sf-menu a, .sf-menu a:visited {height:34px !IE;}
+.sf-menu li li {
+	width:200px;
+	background:#726f72 !IE;
+}
