@@ -1,6 +1,6 @@
 <?php
 /*
-* 2007-2013 PrestaShop
+* 2007-2012 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -19,7 +19,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2013 PrestaShop SA
+*  @copyright  2007-2012 PrestaShop SA
 *  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
@@ -52,8 +52,6 @@ class StockAvailableCore extends ObjectModel
 
 	/** @var bool determine if a product is out of stock - it was previously in Product class */
 	public $out_of_stock = false;
-
-	protected static $cache_quantity_available;
 
 	/**
 	 * @see ObjectModel::$definition
@@ -173,14 +171,6 @@ class StockAvailableCore extends ObjectModel
 						continue;
 
 					$product_quantity = $manager->getProductRealQuantities($id_product, null, $allowed_warehouse_for_product_clean, true);
-					
-					Hook::exec('actionUpdateQuantity',
-									array(
-										'id_product' => $id_product,
-										'id_product_attribute' => 0,
-										'quantity' => $product_quantity
-										)
-					);
 				}
 				// else this product has attributes, hence loops on $ids_product_attribute
 				else
@@ -307,7 +297,11 @@ class StockAvailableCore extends ObjectModel
 		if (!Validate::isUnsignedId($id_product))
 			return false;
 
-		$existing_id = StockAvailable::getStockAvailableIdByProductId((int)$id_product, (int)$id_product_attribute, $id_shop);
+		if ($id_shop === null)
+			$id_shop = Context::getContext()->shop->id;
+
+		$existing_id = StockAvailable::getStockAvailableIdByProductId((int)$id_product, (int)$id_product_attribute, (int)$id_shop);
+
 		if ($existing_id > 0)
 		{
 			Db::getInstance()->update(
@@ -345,23 +339,18 @@ class StockAvailableCore extends ObjectModel
 		if ($id_product_attribute === null)
 			$id_product_attribute = 0;
 
-		$key = (int)$id_product.'-'.(int)$id_product_attribute.'-'.(int)$id_shop;
-		if (!isset(self::$cache_quantity_available[$key]))
-		{
-			$query = new DbQuery();
-			$query->select('SUM(quantity)');
-			$query->from('stock_available');
-	
-			// if null, it's a product without attributes
-			if ($id_product !== null)
-				$query->where('id_product = '.(int)$id_product);
-	
-			$query->where('id_product_attribute = '.(int)$id_product_attribute);
-			$query = StockAvailable::addSqlShopRestriction($query, $id_shop);
+		$query = new DbQuery();
+		$query->select('SUM(quantity)');
+		$query->from('stock_available');
 
-			self::$cache_quantity_available[$key] = (int)Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
-		}
-		return self::$cache_quantity_available[$key];
+		// if null, it's a product without attributes
+		if ($id_product !== null)
+			$query->where('id_product = '.(int)$id_product);
+
+		$query->where('id_product_attribute = '.(int)$id_product_attribute);
+		$query = StockAvailable::addSqlShopRestriction($query, $id_shop);
+
+		return (int)Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
 	}
 
 	/**
@@ -370,11 +359,9 @@ class StockAvailableCore extends ObjectModel
 	 */
 	public function add($autodate = true, $null_values = false)
 	{
-		if (!$result = parent::add($autodate, $null_values))
+		if (!parent::add($autodate, $null_values))
 			return false;
-
-		$result &= $this->postSave();		
-		return $result;
+		$this->postSave();
 	}
 
 	/**
@@ -383,11 +370,9 @@ class StockAvailableCore extends ObjectModel
 	 */
 	public function update($null_values = false)
 	{
-		if (!$result = parent::update($null_values))
+		if (!parent::update($null_values))
 			return false;
-
-		$result &= $this->postSave();
-		return $result;
+		return $this->postSave();
 	}
 
 	/**
@@ -401,27 +386,6 @@ class StockAvailableCore extends ObjectModel
 			return true;
 
 		$id_shop = (Shop::getContext() != Shop::CONTEXT_GROUP ? $this->id_shop : null);
-
-// 		if (!Configuration::get('PS_DISP_UNAVAILABLE_ATTR'))
-// 		{
-// 			$combination = new Combination((int)$this->id_product_attribute);
-// 			if ($colors = $combination->getColorsAttributes())
-// 			{
-// 				$product = new Product((int)$this->id_product);
-// 				foreach ($colors as $color)
-// 				{
-// 					if ($product->isColorUnavailable((int)$color['id_attribute'], (int)$this->id_shop))
-// 					{
-// 						// Change template dir if called from the BackOffice
-// 						$current_template_dir = Context::getContext()->smarty->getTemplateDir();
-// 						Context::getContext()->smarty->setTemplateDir(_PS_THEME_DIR_.'tpl');
-// 						Tools::clearCache(null, 'product-list-colors.tpl', Product::getColorsListCacheId((int)$product->id));
-// 						Context::getContext()->smarty->setTemplateDir($current_template_dir);
-// 						break;
-// 					}
-// 				}
-// 			}
-// 		}
 		
 		$total_quantity = (int)Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('
 			SELECT SUM(quantity) as quantity
@@ -581,31 +545,11 @@ class StockAvailableCore extends ObjectModel
 						return true;
 			}
 
-		$res =  Db::getInstance()->execute('
+		return Db::getInstance()->execute('
 		DELETE FROM '._DB_PREFIX_.'stock_available
 		WHERE id_product = '.(int)$id_product.
 		($id_product_attribute ? ' AND id_product_attribute = '.(int)$id_product_attribute : '').
 		StockAvailable::addSqlShopRestriction(null, $shop));
-		
-		if ($id_product_attribute)
-		{
-			if ($shop === null || !Validate::isLoadedObject($shop))
-			{
-				$shop_datas = array();
-				StockAvailable::addSqlShopParams($shop_datas);
-				$id_shop = (int)$shop_datas['id_shop'];
-			}
-			else
-				$id_shop = (int)$shop->id;
-
-			$stock_available = new StockAvailable();
-			$stock_available->id_product = (int)$id_product;
-			$stock_available->id_product_attribute = (int)$id_product;
-			$stock_available->id_shop = (int)$id_shop;
-			$stock_available->postSave();
-		}
-
-		return $res;
 	}
 
 	/**
@@ -704,7 +648,7 @@ class StockAvailableCore extends ObjectModel
 
 		// if there is no $id_shop, gets the context one
 		// get shop group too
-		if ($shop === null || $shop === $context->shop->id)
+		if ($shop === null)
 		{
 			if (Shop::getContext() == Shop::CONTEXT_GROUP)
 				$shop_group = Shop::getContextShopGroup();

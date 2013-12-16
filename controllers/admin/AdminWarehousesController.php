@@ -1,6 +1,6 @@
 <?php
 /*
-* 2007-2013 PrestaShop
+* 2007-2012 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -19,7 +19,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2013 PrestaShop SA
+*  @copyright  2007-2012 PrestaShop SA
 *  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
@@ -31,7 +31,6 @@ class AdminWarehousesControllerCore extends AdminController
 {
 	public function __construct()
 	{
-		$this->bootstrap = true;
 	 	$this->table = 'warehouse';
 	 	$this->className = 'Warehouse';
 		$this->deleted = true;
@@ -39,32 +38,33 @@ class AdminWarehousesControllerCore extends AdminController
 		$this->multishop_context = Shop::CONTEXT_ALL;
 
 		$this->fields_list = array(
-			'id_warehouse'	=> array(
-				'title' => $this->l('ID'),
-				'width' => 50,
-			),
 			'reference'	=> array(
 				'title' => $this->l('Reference'),
+				'width' => 150,
 			),
 			'name' => array(
 				'title' => $this->l('Name'),
 			),
 			'management_type' => array(
 				'title' => $this->l('Managment type'),
+				 'width' => 80,
 			),
 			'employee' => array(
 				'title' => $this->l('Manager'),
+				'width' => 200,
 				'filter_key' => 'employee',
 				'havingFilter' => true
 			),
 			'location' => array(
 				'title' => $this->l('Location'),
+				'width' => 200,
 				'orderby' => false,
 				'filter' => false,
 				'search' => false,
 			),
 			'contact' => array(
 				'title' => $this->l('Phone Number'),
+				'width' => 200,
 				'orderby' => false,
 				'filter' => false,
 				'search' => false,
@@ -72,18 +72,6 @@ class AdminWarehousesControllerCore extends AdminController
 		);
 
 		parent::__construct();
-	}
-
-	public function initPageHeaderToolbar()
-	{
-		if(empty($this->display))
-			$this->page_header_toolbar_btn['new_warehouse'] = array(
-				'href' => self::$currentIndex.'&amp;addwarehouse&amp;token='.$this->token,
-				'desc' => $this->l('Add new warehouse'),
-				'icon' => 'process-icon-new'
-			);
-		
-		parent::initPageHeaderToolbar();
 	}
 
 	/**
@@ -117,12 +105,12 @@ class AdminWarehousesControllerCore extends AdminController
 
 		// display help informations
 		$this->displayInformation($this->l('This interface allows you to manage your warehouses.').'<br />');
-		$this->displayInformation($this->l('Before adding stock in your warehouses, you should check the default currency used.').'<br />');
-		$this->displayInformation($this->l('You should also check:'));
-		$this->displayInformation($this->l('the management type (according to the law in your country), the valuation currency and its associated carriers and shops.').'<br />');
-		$this->displayInformation($this->l('You can also see detailed information about your stock, such as its overall value, the number of products and quantities stored, etc...')
+		$this->displayInformation($this->l('Before adding stock in your warehouses, you should check the general default currency used.').'<br />');
+		$this->displayInformation($this->l('Furthermore, for each warehouse, you should check:'));
+		$this->displayInformation($this->l('the management type (according to the law in your country), the valuation currency, its associated carriers and shops.').'<br />');
+		$this->displayInformation($this->l('Finally, you can see detailed informations on your stock per warehouse, such as its overall value, the number of products and quantities stored, etc.')
 								  .'<br /><br />');
-		$this->displayInformation($this->l('Be careful! Products from different warehouses will need to be shipped in different packages.'));
+		$this->displayInformation($this->l('Be careful, products from different warehouses will need to be shipped in different packages.'));
 
 		return parent::renderList();
 	}
@@ -146,15 +134,15 @@ class AdminWarehousesControllerCore extends AdminController
 
 		// sets the title of the toolbar
 		if (Tools::isSubmit('add'.$this->table))
-			$this->toolbar_title = $this->l('Stock: Create a warehouse');
+			$this->toolbar_title = $this->l('Stock: create warehouse');
 		else
-			$this->toolbar_title = $this->l('Stock: Warehouse management');
+			$this->toolbar_title = $this->l('Stock: warehouse management');
 
 		// sets the fields of the form
 		$this->fields_form = array(
 			'legend' => array(
 				'title' => $this->l('Warehouse information'),
-				'icon' => 'icon-pencil'
+				'image' => '../img/admin/edit.gif'
 			),
 			'input' => array(
 				array(
@@ -165,32 +153,34 @@ class AdminWarehousesControllerCore extends AdminController
 					'type' => 'text',
 					'label' => $this->l('Reference:'),
 					'name' => 'reference',
+					'size' => 30,
 					'maxlength' => 32,
 					'required' => true,
-					'hint' => $this->l('Reference for this warehouse'),
+					'desc' => $this->l('Reference for this warehouse'),
 				),
 				array(
 					'type' => 'text',
 					'label' => $this->l('Name:'),
 					'name' => 'name',
+					'size' => 40,
 					'maxlength' => 45,
 					'required' => true,
-					'hint' => array(
-						$this->l('Name of this warehouse'),
-						$this->l('Invalid characters:').' !&lt;&gt;,;?=+()@#"�{}_$%:',
-					)
+					'desc' => $this->l('Name of this warehouse'),
+					'hint' => $this->l('Invalid characters:').' !<>,;?=+()@#"�{}_$%:',
 				),
 				array(
 					'type' => 'text',
 					'label' => $this->l('Phone:'),
 					'name' => 'phone',
+					'size' => 15,
 					'maxlength' => 16,
-					'hint' => $this->l('Phone number for this warehouse')
+					'desc' => $this->l('Phone number for this warehouse')
 				),
 				array(
 					'type' => 'text',
 					'label' => $this->l('Address:'),
 					'name' => 'address',
+					'size' => 100,
 					'maxlength' => 128,
 					'required' => true
 				),
@@ -198,13 +188,15 @@ class AdminWarehousesControllerCore extends AdminController
 					'type' => 'text',
 					'label' => $this->l('Address:').' (2)',
 					'name' => 'address2',
+					'size' => 100,
 					'maxlength' => 128,
-					'hint' => $this->l('Address of this warehouse (complementary address is optional).'),
+					'desc' => $this->l('Address of this warehouse (complementary address is optional).'),
 				),
 				array(
 					'type' => 'text',
 					'label' => $this->l('Postcode/Zip Code:'),
 					'name' => 'postcode',
+					'size' => 10,
 					'maxlength' => 12,
 					'required' => true,
 				),
@@ -212,6 +204,7 @@ class AdminWarehousesControllerCore extends AdminController
 					'type' => 'text',
 					'label' => $this->l('City:'),
 					'name' => 'city',
+					'size' => 20,
 					'maxlength' => 32,
 					'required' => true,
 				),
@@ -226,7 +219,7 @@ class AdminWarehousesControllerCore extends AdminController
 						'id' => 'id_country',
 						'name' => 'name',
 					),
-					'hint' => $this->l('Warehouse location country')
+					'desc' => $this->l('Country where the state, region or city is located')
 				),
 				array(
 					'type' => 'select',
@@ -261,11 +254,8 @@ class AdminWarehousesControllerCore extends AdminController
 						'id' => 'id_reference',
 						'name' => 'name'
 					),
-					'hint' => array(
-						$this->l('Associated carriers. Use CTRL+CLICK to select several.'),
-						$this->l('You must select at least one carrier, if you do not select a carrier none will be able to ship from this warehouse.'),
-						$this->l('You can specify the number of carriers available to ship orders from particular warehouses.'),
-					)
+					'desc' => $this->l('Associated carriers. Use CTRL+CLICK to select several.'),
+					'hint' => $this->l('You can specify the carriers available to ship orders from this warehouse'),
 				),
 			),
 
@@ -278,7 +268,7 @@ class AdminWarehousesControllerCore extends AdminController
 				'type' => 'shop',
 				'label' => $this->l('Shops:'),
 				'name' => 'checkBoxShopAsso',
-				'hint' => $this->l('Associated shops'),
+				'desc' => $this->l('Associated shops'),
 				'disable_shared' => Shop::SHARE_STOCK
 			);
 		}
@@ -290,7 +280,7 @@ class AdminWarehousesControllerCore extends AdminController
 			$this->fields_form['input'][] = array(
 				'type' => 'select',
 				'label' => $this->l('Management type:'),
-				'hint' => $this->l('Be careful! You won\'t be able to change this value later!'),
+				'hint' => $this->l('Careful! You won\'t be able to change this value later!'),
 				'name' => 'management_type',
 				'required' => true,
 				'options' => array(
@@ -311,14 +301,14 @@ class AdminWarehousesControllerCore extends AdminController
 					'id' => 'id',
 					'name' => 'name'
 				),
-				'hint' => $this->l('Inventory valuation method')
+				'desc' => $this->l('Inventory valuation method')
 			);
 			
 			// adds input valuation currency
 			$this->fields_form['input'][] = array(
 				'type' => 'select',
 				'label' => $this->l('Stock valuation currency:'),
-				'hint' => $this->l('Be careful! You won\'t be able to change this value later!'),
+				'hint' => $this->l('Careful! You won\'t be able to change this value later!'),
 				'name' => 'id_currency',
 				'required' => true,
 				'options' => array(
@@ -401,8 +391,6 @@ class AdminWarehousesControllerCore extends AdminController
 		$address = new Address($warehouse->id_address);
 		$shops = $warehouse->getShops();
 
-		$this->toolbar_title = $warehouse->name;
-
 		// checks objects
 		if (!Validate::isLoadedObject($warehouse) ||
 			!Validate::isLoadedObject($employee) ||
@@ -436,7 +424,7 @@ class AdminWarehousesControllerCore extends AdminController
 		$address = new Address($object->id_address);
 		if (Validate::isLoadedObject($address))
 		{
-			$address->id_warehouse = (int)$object->id;
+			$address->id_warehouse = $object->id_address;
 			$address->save();
 		}
 
@@ -482,7 +470,7 @@ class AdminWarehousesControllerCore extends AdminController
 	{
 		if (!Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT'))
 		{
-			$this->warnings[md5('PS_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate advanced stock management before using this feature.');
+			$this->warnings[md5('PS_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate advanced stock management prior to use this feature.');
 			return false;
 		}
 		parent::initContent();
@@ -492,7 +480,7 @@ class AdminWarehousesControllerCore extends AdminController
 	{
 		if (!Configuration::get('PS_ADVANCED_STOCK_MANAGEMENT'))
 		{
-			$this->warnings[md5('PS_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate advanced stock management before using this feature.');
+			$this->warnings[md5('PS_ADVANCED_STOCK_MANAGEMENT')] = $this->l('You need to activate advanced stock management prior to use this feature.');
 			return false;
 		}
 		parent::initProcess();	
@@ -544,7 +532,7 @@ class AdminWarehousesControllerCore extends AdminController
 		{
 			foreach ($validation as $item)
 				$this->errors[] = $item;
-			$this->errors[] = Tools::displayError('The address is not correct. Please make sure all of the required fields are completed.');
+			$this->errors[] = Tools::displayError('The address is not correct. Check if all required fields are filled.');
 		}
 		else // valid
 		{
@@ -569,7 +557,7 @@ class AdminWarehousesControllerCore extends AdminController
 			if (!($obj = $this->loadObject(true)))
 				return;
 			else if ($obj->getQuantitiesOfProducts() > 0) // not possible : products
-				$this->errors[] = $this->l('It is not possible to delete a warehouse when there are products in it.');
+				$this->errors[] = $this->l('It is not possible to delete a Warehouse when there are products in it.');
 			else if (SupplyOrder::warehouseHasPendingOrders($obj->id)) // not possible : supply orders
 				$this->errors[] = $this->l('It is not possible to delete a Warehouse if it has pending supply orders.');
 			else // else, it can be deleted
