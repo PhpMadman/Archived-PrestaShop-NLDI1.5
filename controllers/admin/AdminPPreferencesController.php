@@ -201,7 +201,14 @@ class AdminPPreferencesControllerCore extends AdminController
 						'validation' => 'isBool',
 						'cast' => 'intval',
 						'type' => 'bool'
-					)
+					),
+					'PS_AUTO_PREORDER_NO_STOCK' => array(
+						'title' => $this->l('Pre-order out of stock products'),
+						'desc' => $this->l('Automaticly display product as Pre-order when product is out of stock'),
+						'validation' => 'isBool',
+						'cast' => 'intval',
+						'type' => 'bool'
+					),
 				)
 			),
 			'stock' => array(

@@ -483,15 +483,25 @@ var fieldRequired = '{l s='Please fill in all required fields, then save the cus
 					</div>
 			{else}
 				{if (!$allow_oosp && $product->quantity <= 0) OR !$product->available_for_order OR (isset($restricted_country_mode) AND $restricted_country_mode) OR $PS_CATALOG_MODE}
+					{if $product->pre_order || ($product->quantity <= 0 && Configuration::get('PS_AUTO_PREORDER_NO_STOCK'))}
+						<span class="exclusive_preorder gradient">
+							{l s='Pre-order'}
+						</span>
+					{else}
 					<span class="exclusive gradient">
-						<!--<span></span>--> <!-- Adds the cart icon -->
 						{l s='Add to cart'}
 					</span>
+					{/if}
 				{else}
+					{if $product->pre_order || ($product->quantity <= 0 && Configuration::get('PS_AUTO_PREORDER_NO_STOCK'))}
+						<p id="add_to_cart" class="buttons_bottom_block">
+							<input type="submit" name="Submit" value="{l s='Pre-order'}" class="exclusive_preorder gradient" />
+						</p>
+					{else}
 					<p id="add_to_cart" class="buttons_bottom_block">
-						<!--<span></span>--> <!-- Adds the cart icon -->
 						<input type="submit" name="Submit" value="{l s='Add to cart'}" class="exclusive gradient" />
 					</p>
+					{/if}
 				{/if}
 			{/if}
 

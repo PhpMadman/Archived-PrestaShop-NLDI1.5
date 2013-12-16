@@ -132,12 +132,24 @@
 			{else}
 				{if ($product.allow_oosp || $product.quantity > 0)}
 					{if isset($static_token)}
+						{if $product.pre_order || ($product.quantity <= 0 && Configuration::get('PS_AUTO_PREORDER_NO_STOCK'))}
+							<a class="button ajax_add_to_cart_button exclusive_preorder gradient" rel="ajax_id_product_{$product.id_product|intval}" href="{$link->getPageLink('cart',false, NULL, "add&id_product={$product.id_product|intval}&token={$static_token}", true)}" title="{l s='Pre-order'}">{l s='Pre-order'}</a>	
+						{else}
 						<a class="button ajax_add_to_cart_button exclusive gradient" rel="ajax_id_product_{$product.id_product|intval}" href="{$link->getPageLink('cart',false, NULL, "add&id_product={$product.id_product|intval}&token={$static_token}", true)}" title="{l s='Add to cart'}">{l s='Add to cart'}</a>
+						{/if}
 					{else}
+						{if $product.pre_order || ($product.quantity <= 0 && Configuration::get('PS_AUTO_PREORDER_NO_STOCK'))}
+							<a class="button ajax_add_to_cart_button exclusive_preorder gradient" rel="ajax_id_product_{$product.id_product|intval}" href="{$link->getPageLink('cart',false, NULL, "add&id_product={$product.id_product|intval}", true)}" title="{l s='Pre-order'}">{l s='Pre-order'}</a>	
+						{else}
 						<a class="button ajax_add_to_cart_button exclusive gradient" rel="ajax_id_product_{$product.id_product|intval}" href="{$link->getPageLink('cart',false, NULL, "add&id_product={$product.id_product|intval}", true)}" title="{l s='Add to cart'}">{l s='Add to cart'}</a>
+						{/if}
 					{/if}
 				{else}
+					{if $product.pre_order || ($product.quantity <= 0 && Configuration::get('PS_AUTO_PREORDER_NO_STOCK'))}
+						<span class="exclusive">{l s='Pre-order'}</span><br />
+					{else}
 					<span class="exclusive">{l s='Add to cart'}</span><br />
+					{/if}
 				{/if}
 			{/if}
 			</div>
