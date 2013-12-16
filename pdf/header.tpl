@@ -22,7 +22,7 @@
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
-<table style="width: 100%">
+<table style="width: 500px">
 <tr>
 	<td style="width: 50%">
 		{if $logo_path}
@@ -32,14 +32,14 @@
 	<td style="width: 50%; text-align: right;">
 		<table style="width: 100%">
 			<tr>
-				<td style="font-weight: bold; font-size: 14pt; color: #444; width: 100%">{$shop_name|escape:'htmlall':'UTF-8'}</td>
+				<td style="font-weight: bold; font-size: 14pt; color: #444; width: 100%">{$shop_name|escape:'htmlall':'UTF-8'} AB</td>
 			</tr>
 			<tr>
-				<td style="font-size: 14pt; color: #9E9F9E">{$date|escape:'htmlall':'UTF-8'}</td>
+				<td style="font-size: 14pt; color: #9E9F9E">{$smarty.now|date_format:'%Y-%m-%d'}</td>
 			</tr>
-			<tr>
+	<!--		<tr>
 				<td style="font-size: 14pt; color: #9E9F9E">{$title|escape:'htmlall':'UTF-8'}</td>
-			</tr>
+			</tr>-->
 		</table>
 	</td>
 </tr>

@@ -37,7 +37,7 @@ class MailCore
 
 	/**
 	 * Send Email
-	 * 
+	 *
 	 * @param int $id_lang Language of the email (to translate the template)
 	 * @param string $template Template: the name of template not be a var but a string !
 	 * @param string $subject
@@ -285,7 +285,7 @@ class MailCore
 		{
 			if ($smtpChecked)
 			{
-				$smtp = new Swift_Connection_SMTP($smtpServer, $smtpPort, ($smtpEncryption == 'off') ? 
+				$smtp = new Swift_Connection_SMTP($smtpServer, $smtpPort, ($smtpEncryption == 'off') ?
 					Swift_Connection_SMTP::ENC_OFF : (($smtpEncryption == 'tls') ? Swift_Connection_SMTP::ENC_TLS : Swift_Connection_SMTP::ENC_SSL));
 				$smtp->setUsername($smtpLogin);
 				$smtp->setpassword($smtpPassword);
@@ -318,7 +318,7 @@ class MailCore
 	 * This method is used to get the translation for email Object.
 	 * For an object is forbidden to use htmlentities,
 	 * we have to return a sentence with accents.
-	 * 
+	 *
 	 * @param string $string raw sentence (write directly in file)
 	 */
 	public static function l($string, $id_lang = null, Context $context = null)
@@ -362,5 +362,5 @@ class MailCore
 		);
 		return vsprintf("<%s.%d.%s@%s>", $midparams);
 	}
-	
+
 }

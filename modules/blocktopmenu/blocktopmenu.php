@@ -131,7 +131,7 @@ class Blocktopmenu extends Module
 		$links_label = Tools::getValue('link') ? array_filter(Tools::getValue('link'), 'strlen') : array();
 		$spacer = str_repeat('&nbsp;', $this->spacer_size);
 		$divLangName = 'link_label';
-		
+
 		$update_cache = false;
 
 		if (Tools::isSubmit('submitBlocktopmenu'))
@@ -188,10 +188,10 @@ class Blocktopmenu extends Module
 			}
 			$update_cache = true;
 		}
-		
+
 		if ($update_cache)
 			$this->clearMenuCache();
-		
+
 		$this->_html .= '
 		<fieldset>
 			<div class="multishop_info">
@@ -236,7 +236,7 @@ class Blocktopmenu extends Module
 		$this->_html .= '<optgroup label="'.$this->l('Categories').'">';
 		$this->getCategoryOption(1, (int)$id_lang, (int)Shop::getContextShopID());
 		$this->_html .= '</optgroup>';
-		
+
 		// BEGIN Shops
 		if (Shop::isFeatureActive())
 		{
@@ -247,10 +247,10 @@ class Blocktopmenu extends Module
 				if (!$shop->setUrl() && !$shop->getBaseURL())
 					continue;
 				$this->_html .= '<option value="SHOP'.(int)$shop->id.'">'.$spacer.$shop->name.'</option>';
-			}	
+			}
 			$this->_html .= '</optgroup>';
 		}
-		
+
 		// BEGIN Products
 		$this->_html .= '<optgroup label="'.$this->l('Products').'">';
 		$this->_html .= '<option value="PRODUCT" style="font-style:italic">'.$spacer.$this->l('Choose ID product').'</option>';
@@ -794,98 +794,98 @@ class Blocktopmenu extends Module
 
 		return Db::getInstance()->executeS($sql);
 	}
-	
+
 
 	public function hookActionObjectCategoryUpdateAfter($params)
 	{
 		$this->clearMenuCache();
 	}
-	
+
 	public function hookActionObjectCategoryDeleteAfter($params)
 	{
 		$this->clearMenuCache();
 	}
-	
+
 	public function hookActionObjectCmsUpdateAfter($params)
 	{
 		$this->clearMenuCache();
 	}
-	
+
 	public function hookActionObjectCmsDeleteAfter($params)
 	{
 		$this->clearMenuCache();
 	}
-	
+
 	public function hookActionObjectSupplierUpdateAfter($params)
 	{
 		$this->clearMenuCache();
 	}
-	
+
 	public function hookActionObjectSupplierDeleteAfter($params)
 	{
 		$this->clearMenuCache();
-	}	
+	}
 
 	public function hookActionObjectManufacturerUpdateAfter($params)
 	{
 		$this->clearMenuCache();
 	}
-	
+
 	public function hookActionObjectManufacturerDeleteAfter($params)
 	{
 		$this->clearMenuCache();
 	}
-	
+
 	public function hookActionObjectProductUpdateAfter($params)
 	{
 		$this->clearMenuCache();
 	}
-	
+
 	public function hookActionObjectProductDeleteAfter($params)
 	{
 		$this->clearMenuCache();
 	}
-	
+
 	public function hookCategoryUpdate($params)
 	{
 		$this->clearMenuCache();
 	}
-	
+
 	private function clearMenuCache()
 	{
 		$this->_clearCache('blocktopmenu.tpl');
 	}
-	
+
 	public function hookActionShopDataDuplication($params)
 	{
 		$linksmenutop = Db::getInstance()->executeS('
 			SELECT *
-			FROM '._DB_PREFIX_.'linksmenutop 
+			FROM '._DB_PREFIX_.'linksmenutop
 			WHERE id_shop = '.(int)$params['old_id_shop']
 			);
 
 		foreach($linksmenutop as $id => $link)
 		{
 			Db::getInstance()->execute('
-				INSERT IGNORE INTO '._DB_PREFIX_.'linksmenutop (id_linksmenutop, id_shop, new_window) 
+				INSERT IGNORE INTO '._DB_PREFIX_.'linksmenutop (id_linksmenutop, id_shop, new_window)
 				VALUES (null, '.(int)$params['new_id_shop'].', '.(int)$link['new_window'].')');
-			
+
 			$linksmenutop[$id]['new_id_linksmenutop'] = Db::getInstance()->Insert_ID();
 		}
-		
+
 		foreach($linksmenutop as $id => $link)
 		{
 			$lang = Db::getInstance()->executeS('
-					SELECT id_lang, '.(int)$params['new_id_shop'].', label, link 
-					FROM '._DB_PREFIX_.'linksmenutop_lang 
+					SELECT id_lang, '.(int)$params['new_id_shop'].', label, link
+					FROM '._DB_PREFIX_.'linksmenutop_lang
 					WHERE id_linksmenutop = '.(int)$link['id_linksmenutop'].' AND id_shop = '.(int)$params['old_id_shop']);
-			
+
 			foreach($lang as $l)
 				Db::getInstance()->execute('
-					INSERT IGNORE INTO '._DB_PREFIX_.'linksmenutop_lang (id_linksmenutop, id_lang, id_shop, label, link) 
+					INSERT IGNORE INTO '._DB_PREFIX_.'linksmenutop_lang (id_linksmenutop, id_lang, id_shop, label, link)
 					VALUES ('.(int)$link['new_id_linksmenutop'].', '.(int)$l['id_lang'].', '.(int)$params['new_id_shop'].', '.(int)$l['label'].', '.(int)$l['link'].' )');
 		}
-		
-		
+
+
 	}
 }

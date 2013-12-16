@@ -116,7 +116,7 @@ class ProductControllerCore extends FrontController
 					$this->context->smarty->assign('adminActionDisplay', false);
 					if ($this->product->id_product_redirected == $this->product->id)
 						$this->product->redirect_type = '404';
-					
+
 					switch ($this->product->redirect_type)
 					{
 						case '301':
@@ -142,7 +142,7 @@ class ProductControllerCore extends FrontController
 				header('Status: 403 Forbidden');
 				$this->errors[] = Tools::displayError('You do not have access to this product.');
 			}
-			
+
 			// Load category
 			if (isset($_SERVER['HTTP_REFERER'])
 				&& !strstr($_SERVER['HTTP_REFERER'], Tools::getHttpHost()) // Assure us the previous page was one of the shop
@@ -314,7 +314,7 @@ class ProductControllerCore extends FrontController
 		$product_price = $this->product->getPrice(Product::$_taxCalculationMethod == PS_TAX_INC, false);
 		$address = new Address($this->context->cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')});
 		$this->context->smarty->assign(array(
-			'quantity_discounts' => $this->formatQuantityDiscounts($quantity_discounts, $product_price, (float)$tax),
+			'quantity_discounts' => $this->formatQuantityDiscounts($quantity_discounts, $product_price, (float)$tax,true),
 			'ecotax_tax_inc' => $ecotax_tax_amount,
 			'ecotax_tax_exc' => Tools::ps_round($this->product->ecotax, 2),
 			'ecotaxTax_rate' => $ecotax_rate,
@@ -346,8 +346,8 @@ class ProductControllerCore extends FrontController
 		}
 		if (!isset($cover))
 			$cover = array(
-				'id_image' => $this->context->language->iso_code.'-default', 
-				'legend' => 'No picture', 
+				'id_image' => $this->context->language->iso_code.'-default',
+				'legend' => 'No picture',
 				'title' => 'No picture'
 				);
 		$size = Image::getSize(ImageType::getFormatedName('large'));
@@ -497,7 +497,7 @@ class ProductControllerCore extends FrontController
 		if (!isset($path) || !$path)
 			$path = Tools::getPath((int)$this->context->shop->id_category, $this->product->name);
 		$this->context->smarty->assign('path', $path);
-		
+
 		$this->context->smarty->assign('categories', Category::getHomeCategories($this->context->language->id));
 		$this->context->smarty->assign(array('HOOK_PRODUCT_FOOTER' => Hook::exec('displayFooterProduct', array('product' => $this->product, 'category' => $this->category))));
 	}
@@ -555,12 +555,12 @@ class ProductControllerCore extends FrontController
 	{
 		if (!$field_ids = $this->product->getCustomizationFieldIds())
 			return false;
-			
+
 		$authorized_text_fields = array();
 		foreach ($field_ids as $field_id)
 			if ($field_id['type'] == Product::CUSTOMIZE_TEXTFIELD)
 				$authorized_text_fields[(int)$field_id['id_customization_field']] = 'textField'.(int)$field_id['id_customization_field'];
-				
+
 		$indexes = array_flip($authorized_text_fields);
 		foreach ($_POST as $field_name => $value)
 			if (in_array($field_name, $authorized_text_fields) && !empty($value))
@@ -585,26 +585,48 @@ class ProductControllerCore extends FrontController
 		$this->context->smarty->assign('customizationFormTarget', $customization_form_target);
 	}
 
-	protected function formatQuantityDiscounts($specific_prices, $price, $tax_rate)
+	protected function formatQuantityDiscounts($specific_prices, $price, $tax_rate,$tax_after)
 	{
 		foreach ($specific_prices as $key => &$row)
 		{
 			$row['quantity'] = &$row['from_quantity'];
 			if ($row['price'] >= 0) // The price may be directly set
 			{
-				$cur_price = (Product::$_taxCalculationMethod == PS_TAX_EXC ? $row['price'] : $row['price'] * (1 + $tax_rate / 100));
-				if ($row['reduction_type'] == 'amount')
-					$cur_price -= (Product::$_taxCalculationMethod == PS_TAX_INC ? $row['reduction'] : $row['reduction'] / (1 + $tax_rate / 100));
-				else
-					$cur_price *= 1 - $row['reduction'];
-				$row['real_value'] = $price - $cur_price;
+				if($tax_after) {
+					$cur_price = (Product::$_taxCalculationMethod == PS_TAX_EXC ? $row['price'] : $row['price']);
+					if ($row['reduction_type'] == 'amount') {
+						$cur_price -= (Product::$_taxCalculationMethod == PS_TAX_INC ? $row['reduction'] : $row['reduction']);
+					} else {
+						$cur_price *= 1 - $row['reduction'];
+						$row['real_value'] = $price - $cur_price;
+					}
+				} else {
+					$cur_price = (Product::$_taxCalculationMethod == PS_TAX_EXC ? $row['price'] : $row['price'] * (1 + $tax_rate / 100));
+					if ($row['reduction_type'] == 'amount') {
+						$cur_price -= (Product::$_taxCalculationMethod == PS_TAX_INC ? $row['reduction'] : $row['reduction'] / (1 + $tax_rate / 100));
+					} else {
+						$cur_price *= 1 - $row['reduction'];
+					$row['real_value'] = $price - $cur_price;
+					}
+				}
 			}
 			else
 			{
-				if ($row['reduction_type'] == 'amount')
-					$row['real_value'] = Product::$_taxCalculationMethod == PS_TAX_INC ? $row['reduction'] : $row['reduction'] / (1 + $tax_rate / 100);
-				else
-					$row['real_value'] = $row['reduction'] * 100;
+				if($tax_after) {
+					if ($row['reduction_type'] == 'amount') {
+						$row['real_value'] = Product::$_taxCalculationMethod == PS_TAX_INC ? $row['reduction'] : $row['reduction']);
+
+					} else {
+						$row['real_value'] = $row['reduction'] * 100;
+					}
+				} else {
+					if ($row['reduction_type'] == 'amount') {
+						$row['real_value'] = Product::$_taxCalculationMethod == PS_TAX_INC ? $row['reduction'] : $row['reduction'] / (1 + $tax_rate / 100);
+
+					} else {
+						$row['real_value'] = $row['reduction'] * 100;
+					}
+				}
 			}
 			$row['nextQuantity'] = (isset($specific_prices[$key + 1]) ? (int)$specific_prices[$key + 1]['from_quantity'] : -1);
 		}

@@ -81,12 +81,12 @@
 #cart_block #cart-buttons .button_small {display:none;}
 #cart_block #cart-buttons  #button_order_cart {
 	float:right;
-	padding-left:20px
+	padding-left:30px
 }
 #cart_block #cart-buttons  #button_order_cart span {
 	position:absolute;
 	top:-1px;
-	left:-12px;
+	left:-1px;
 	display:block;
 	height:26px;
 	width:26px;

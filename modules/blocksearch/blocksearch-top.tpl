@@ -34,11 +34,11 @@
 </div>
 {else}
 <!-- Block search module TOP -->
-<div id="search_block_top">
+<!--<div id="search_block_top">
 
 	<form method="get" action="{$link->getPageLink('search')}" id="searchbox">
 		<p>
-			<label for="search_query_top"><!-- image on background --></label>
+			<label for="search_query_top"><!-x- image on background -x-></label>
 			<input type="hidden" name="controller" value="search" />
 			<input type="hidden" name="orderby" value="position" />
 			<input type="hidden" name="orderway" value="desc" />
@@ -46,7 +46,7 @@
 			<input type="submit" name="submit_search" value="{l s='Search' mod='blocksearch'}" class="button" />
 	</p>
 	</form>
-</div>
+</div>-->
 {include file="$self/blocksearch-instantsearch.tpl"}
 {/if}
 <!-- /Block search module TOP -->

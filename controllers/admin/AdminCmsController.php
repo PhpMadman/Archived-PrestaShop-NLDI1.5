@@ -126,6 +126,15 @@ class AdminCmsControllerCore extends AdminController
 					'desc' => $this->l('To add "tags" click in the field, write something, then press "Enter"')
 				),
 				array(
+					'type' => 'textarea',
+					'label' => $this->l('Short Description'),
+					'name' => 'short_description',
+					'lang' => true,
+// 					'hint' => $this->l('Invalid characters:').' <>;=#{}',
+					'rows' => 5,
+					'cols' => 40,
+				),
+				array(
 					'type' => 'text',
 					'label' => $this->l('Friendly URL'),
 					'name' => 'link_rewrite',

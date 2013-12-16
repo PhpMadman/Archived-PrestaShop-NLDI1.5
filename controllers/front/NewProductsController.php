@@ -46,6 +46,13 @@ class NewProductsControllerCore extends FrontController
 		parent::initContent();
 
 		$this->productSort();
+		
+		// Override default configuration values: cause the new products page must display latest products first.
+		if (!Tools::getIsset('orderway') || !Tools::getIsset('orderby'))
+		{
+			$this->orderBy = 'date_add';
+			$this->orderWay = 'DESC';
+		}
 
 		$nbProducts = (int)Product::getNewProducts(
 			$this->context->language->id,
@@ -53,11 +60,44 @@ class NewProductsControllerCore extends FrontController
 			(isset($this->n) ? (int)($this->n) : null),
 			true
 		);
+		
+// 		$nbProducts = (int)Product::getLatestProducts(
+// 			$this->context->language->id,
+// 			(isset($this->p) ? (int)($this->p) - 1 : null),
+// 			(isset($this->n) ? (int)($this->n) : null),
+// 			true
+// 		);
 
 		$this->pagination($nbProducts);
 
+		$newProducts = Product::getNewProducts($this->context->language->id, (int)($this->p) - 1, (int)($this->n), false, $this->orderBy, $this->orderWay);
+		if((count($newProducts) < Configuration::get('PS_NB_QTY_LATEST_PRODUCT')) && Configuration::get('PS_NB_LATEST_PRODUCT') ) {
+		$latestProducts = Product::getLatestProducts($this->context->language->id, (int)($this->p) - 1, Configuration::get('PS_NB_QTY_LATEST_PRODUCT'), false, $this->orderBy, $this->orderWay);
+			$limit = Configuration::get('PS_NB_QTY_LATEST_PRODUCT')-count($newProducts);
+			$count = 0;
+			foreach($latestProducts as $key => $lProduct) {
+				if($count >= $limit) {
+					break;
+				}
+				$is_new = false;
+				foreach($newProducts as $key => $nProduct) {
+					if($nProduct['id_product'] == $lProduct['id_product']) { // if product from latestProducts exist in newProducts
+						$is_new = true;
+					}
+				}
+				if(!$is_new) { // if product isn't in new products, add it
+					$count++;
+					$newProducts[] = $lProduct;
+				}
+			}
+		}
+// 		$nbProducts = count($newProducts);
+// 		$this->pagination($nbProducts);
+		
+
 		$this->context->smarty->assign(array(
-			'products' => Product::getNewProducts($this->context->language->id, (int)($this->p) - 1, (int)($this->n), false, $this->orderBy, $this->orderWay),
+// 			'products' => Product::getNewProducts($this->context->language->id, (int)($this->p) - 1, (int)($this->n), false, $this->orderBy, $this->orderWay),
+			'products' => $newProducts,
 			'add_prod_display' => Configuration::get('PS_ATTRIBUTE_CATEGORY_DISPLAY'),
 			'nbProducts' => (int)($nbProducts),
 			'homeSize' => Image::getSize(ImageType::getFormatedName('home')),

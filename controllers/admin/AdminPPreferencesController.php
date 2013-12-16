@@ -59,6 +59,27 @@ class AdminPPreferencesControllerCore extends AdminController
 						'cast' => 'intval',
 						'type' => 'text'
 					),
+					'PS_NB_LATEST_PRODUCT' => array(
+						'title' => $this->l('Latest Products'),
+						'desc' => $this->l('When active, new products page will be extended to always show products added witihin Latest Added days.'),
+						'validation' => 'isBool',
+						'cast' => 'intval',
+						'required' => false,
+						'type' => 'bool'
+					),
+					'PS_NB_DAYS_LATEST_PRODUCT' => array(
+						'title' => $this->l('Number of days for which the product is considered \'Latest Added\''),
+						'validation' => 'isUnsignedInt',
+						'cast' => 'intval',
+						'type' => 'text'
+					),
+					'PS_NB_QTY_LATEST_PRODUCT' => array(
+						'title' => $this->l('Nr of latest products'),
+						'desc' => $this->l('If New Products less then this, add Latest Added up to (Nr includes new products count) '),
+						'validation' => 'isUnsignedInt',
+						'cast' => 'intval',
+						'type' => 'text'
+					),
 					'PS_CART_REDIRECT' => array(
 						'title' => $this->l('Redirection after adding product to cart'),
 						'desc' => $this->l('Only for non-AJAX version of the cart'),
@@ -116,7 +137,8 @@ class AdminPPreferencesControllerCore extends AdminController
 							array('id' => '3', 'name' => $this->l('Product modified date')),
 							array('id' => '4', 'name' => $this->l('Position inside category')),
 							array('id' => '5', 'name' => $this->l('Manufacturer')),
-							array('id' => '6', 'name' => $this->l('Product quantity'))
+							array('id' => '6', 'name' => $this->l('Product quantity')),
+							array('id' => '7', 'name' => $this->l('Prodct reference')) ,
 						),
 						'identifier' => 'id'
 					),

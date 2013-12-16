@@ -209,6 +209,7 @@ class AdminAttributeGeneratorControllerCore extends AdminController
 			{
 				$target['price'] = $impacts[$combination['id_attribute']]['price'];
 				$target['weight'] = $impacts[$combination['id_attribute']]['weight'];
+				$target['reference'] = $impacts[$combination['id_attribute']]['reference'];
 			}
 		}
         $this->context->smarty->assign(array(

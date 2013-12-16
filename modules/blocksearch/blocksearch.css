@@ -1,14 +1,14 @@
 /* block top search */
-#search_block_top {
+/*#search_block_top {
 	position:absolute;
-	top:44px;
+	top:100px;
 	left:0;
-}
-#search_block_top p {padding:0;}
+}*/
+/*#search_block_top p {padding:0;}
 #search_block_top #search_query_top {
 	padding:0 5px;
 	height:23px;
-	width:300px;/* 310 */
+	width:300px;
 	border:1px solid #666;
 	border-right: 0 !important;
 	color:#666;
@@ -37,4 +37,4 @@ form#searchbox input#search_query_block{
 	margin-top:10px;
 }
 form#searchbox input#search_button{padding: 1px 4px;}
-
+*/

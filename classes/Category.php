@@ -256,13 +256,13 @@ class CategoryCore extends ObjectModel
 					$children[] = $categ->recurseLiteCategTree($max_depth, $current_depth + 1, $id_lang, $excluded_ids_array);
 				}
 			}
-		
+
 		if (is_array($this->description))
 			foreach ($this->description as $lang => $description)
 				$this->description[$lang] = Category::getDescriptionClean($description);
 		else
 			$this->description = Category::getDescriptionClean($this->description);
-			
+
 		return array(
 			'id' => (int)$this->id,
 			'link' => Context::getContext()->link->getCategoryLink($this->id, $this->link_rewrite),
@@ -335,13 +335,13 @@ class CategoryCore extends ObjectModel
 					GroupReduction::deleteCategory($cat->id);
 			}
 		}
-		
+
 		/* Rebuild the nested tree */
 		if (!$this->hasMultishopEntries() && (!isset($this->doNotRegenerateNTree) || !$this->doNotRegenerateNTree))
 			Category::regenerateEntireNtree();
 
 		Hook::exec('actionCategoryDelete', array('category' => $this));
-			
+
 		return true;
 	}
 
@@ -558,11 +558,11 @@ class CategoryCore extends ObjectModel
 			$context = Context::getContext();
 		if ($check_access && !$this->checkAccess($context->customer->id))
 			return false;
-		
+
 		$front = true;
 		if (!in_array($context->controller->controller_type, array('front', 'modulefront')))
 			$front = false;
-			
+
 		if ($p < 1) $p = 1;
 
 		if (empty($order_by))
@@ -636,7 +636,7 @@ class CategoryCore extends ObjectModel
 				LEFT JOIN `'._DB_PREFIX_.'manufacturer` m
 					ON m.`id_manufacturer` = p.`id_manufacturer`
 				WHERE product_shop.`id_shop` = '.(int)$context->shop->id.'
-				AND (pa.id_product_attribute IS NULL OR product_attribute_shop.id_shop='.(int)$context->shop->id.') 
+				AND (pa.id_product_attribute IS NULL OR product_attribute_shop.id_shop='.(int)$context->shop->id.')
 				AND (i.id_image IS NULL OR image_shop.id_shop='.(int)$context->shop->id.')
 					AND cp.`id_category` = '.(int)$this->id
 					.($active ? ' AND product_shop.`active` = 1' : '')
@@ -1000,7 +1000,7 @@ class CategoryCore extends ObjectModel
 	{
 		Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'category_group` WHERE `id_category` = '.(int)$this->id);
 	}
-	
+
 	public function cleanAssoProducts()
 	{
 		Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'category_product` WHERE `id_category` = '.(int)$this->id);
@@ -1233,7 +1233,7 @@ class CategoryCore extends ObjectModel
 			return false;
 		return ($this->nleft >= $interval['nleft'] && $this->nright <= $interval['nright']);
 	}
-	
+
 	public static function inShopStatic($id_category, Shop $shop = null)
 	{
 		if (!$shop || !is_object($shop))

@@ -15,8 +15,11 @@
 .sf-menu {
 	margin: 10px 0;
 	padding:0;
-	width:980px;/* 980 */
-	background: #383838;
+	width:100%;/* 980 */
+	background: rgba(0,80,255,0.8);
+	border-radius: 10px;
+	border-bottom: 3px solid #cccccc;
+	border-right: 2px solid #cccccc;
 }
 .sf-menu ul {
 	position:		absolute;
@@ -32,7 +35,7 @@
 .sf-menu li {
 	float:			left;
 	position:		relative;
-	border-right: 1px solid #777;
+	border-right: 1px solid rgba(0,80,255,1);;
 }
 .sf-menu a {
 	display:		block;
@@ -66,6 +69,51 @@ ul.sf-menu li li li.sfHover ul {
 	top:			0;
 }
 
+/* block top search */
+#search_block_top {
+	float: right;
+	margin-right: 10px;
+	/* 	position:absolute; */
+	/* 	top:100px; */
+/* 	left:0; */
+	border:0;
+}
+#search_block_top p {padding:0;}
+#search_block_top #search_query_top {
+	padding:0 5px;
+	height:23px;
+	width:300px;/* 310 */
+	border:1px solid #666;
+	border-right: 0 !important;
+	color:#666;
+	background:url(../img/bg_search_input.png) repeat-x 0 0 #fff;
+/* 	float: left; */
+}
+
+#search_block_top .button {
+	border:none;
+	border-radius:0;
+	color:#fff;
+	text-transform:uppercase;
+	background:url(../img/bg_search_submit.png) repeat-x 0 0 #101010;
+/* 	float: left; */
+	height: 25px;
+}
+
+form#searchbox{padding-top:5px}
+form#searchbox label{color:#333;margin-bottom:1px}
+form#searchbox input#search_query_block{
+	border: 1px solid #CCCCCC;
+	-webkit-border-radius:3px !important;
+	-moz-border-radius:3px !important;
+	border-radius:3px !important;
+	height: 18px;
+	margin-top:10px;
+}
+form#searchbox input#search_button{padding: 1px 4px;}
+
+
+
 /*** DEMO SKIN ***/
 .sf-menu {
 	float:			left;
@@ -76,7 +124,7 @@ ul.sf-menu li li li.sfHover ul {
 	margin-right:2px;
 	padding: 0 22px 0 20px;
 	line-height:34px;
-	border: 0;
+/* 	border: 0; */
 	text-decoration:none;
 }
 .sf-menu a, .sf-menu a:visited  { /* visited pseudo selector so IE6 applies text colour*/
@@ -90,7 +138,8 @@ ul.sf-menu li li li.sfHover ul {
 	background:	rgba(113, 113, 113, 0.9);
 }
 .sf-menu a:focus, .sf-menu a:hover, .sf-menu a:active {
-  	background: #4E4E4E;
+/*   	background: #4E4E4E; */
+	font-size:15px;
 }
 .sf-menu ul li:hover, .sf-menu ul li.sfHover,
 .sf-menu ul li a:focus, .sf-menu ul li a:hover, .sf-menu ul li a:active {

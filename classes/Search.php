@@ -176,25 +176,29 @@ class SearchCore
 		$intersect_array = array();
 		$score_array = array();
 		$words = explode(' ', Search::sanitize($expr, $id_lang));
-
 		foreach ($words as $key => $word)
 			if (!empty($word) && strlen($word) >= (int)Configuration::get('PS_SEARCH_MINWORDLEN'))
 			{
 				$word = str_replace('%', '\\%', $word);
 				$word = str_replace('_', '\\_', $word);
-				$intersect_array[] = 'SELECT si.id_product
-					FROM '._DB_PREFIX_.'search_word sw
-					LEFT JOIN '._DB_PREFIX_.'search_index si ON sw.id_word = si.id_word
-					WHERE sw.id_lang = '.(int)$id_lang.'
+				$sql = 'SELECT si.id_product ';
+					$sql .= ' FROM '._DB_PREFIX_.'search_word sw
+					LEFT JOIN '._DB_PREFIX_.'search_index si ON sw.id_word = si.id_word';
+					$sql .= ' WHERE sw.id_lang = '.(int)$id_lang.'
 						AND sw.id_shop = '.$context->shop->id.'
 						AND sw.word LIKE
 					'.($word[0] == '-'
-						? ' \''.pSQL(Tools::substr($word, 1, PS_SEARCH_MAX_WORD_LENGTH)).'%\''
-						: '\''.pSQL(Tools::substr($word, 0, PS_SEARCH_MAX_WORD_LENGTH)).'%\''
+						? ' \'%'.pSQL(Tools::substr($word, 1, PS_SEARCH_MAX_WORD_LENGTH)).'%\''
+						: '\'%'.pSQL(Tools::substr($word, 0, PS_SEARCH_MAX_WORD_LENGTH)).'%\''
+// 						? ' \''.pSQL(Tools::substr($word, 1, PS_SEARCH_MAX_WORD_LENGTH)).'%\''
+// 						: '\''.pSQL(Tools::substr($word, 0, PS_SEARCH_MAX_WORD_LENGTH)).'%\''
 					);
+				if($debug) {
+					echo($sql);
+				}
+				$intersect_array[] = $sql;
 
-				if ($word[0] != '-')
-					$score_array[] = 'sw.word LIKE \''.pSQL(Tools::substr($word, 0, PS_SEARCH_MAX_WORD_LENGTH)).'%\'';
+				if ($word[0] != '-') $score_array[] = 'sw.word LIKE \''.pSQL(Tools::substr($word, 0, PS_SEARCH_MAX_WORD_LENGTH)).'%\'';
 			}
 			else
 				unset($words[$key]);
@@ -256,7 +260,7 @@ class SearchCore
 
 		if ($ajax)
 		{
-			$sql = 'SELECT DISTINCT p.id_product, pl.name pname, cl.name cname,
+			$sql = 'SELECT DISTINCT p.id_product, p.reference, pl.name pname, cl.name cname,
 						cl.link_rewrite crewrite, pl.link_rewrite prewrite '.$score.'
 					FROM '._DB_PREFIX_.'product p
 					INNER JOIN `'._DB_PREFIX_.'product_lang` pl ON (
@@ -281,7 +285,7 @@ class SearchCore
 		$alias = '';
 		if ($order_by == 'price')
 			$alias = 'product_shop.';
-		$sql = 'SELECT p.*, product_shop.*, stock.out_of_stock, IFNULL(stock.quantity, 0) as quantity, 
+		$sql = 'SELECT p.*, product_shop.*, stock.out_of_stock, IFNULL(stock.quantity, 0) as quantity,
 				pl.`description_short`, pl.`available_now`, pl.`available_later`, pl.`link_rewrite`, pl.`name`,
 			 image_shop.`id_image`, il.`legend`, m.`name` manufacturer_name '.$score.', product_attribute_shop.`id_product_attribute`,
 				DATEDIFF(
@@ -494,7 +498,7 @@ class SearchCore
 								$word = Tools::substr($word, 0, PS_SEARCH_MAX_WORD_LENGTH);
 								// Remove accents
 								$word = Tools::replaceAccentedChars($word);
-
+								
 								if (!isset($product_array[$word]))
 									$product_array[$word] = 0;
 								$product_array[$word] += $weight_array[$key];
@@ -648,7 +652,7 @@ class SearchCore
 				)
 				'.Shop::addSqlAssociation('product', 'p', false).'
 				LEFT JOIN `'._DB_PREFIX_.'image` i ON (i.`id_product` = p.`id_product`)'.
-				Shop::addSqlAssociation('image', 'i', false, 'image_shop.cover=1').'		
+				Shop::addSqlAssociation('image', 'i', false, 'image_shop.cover=1').'
 				LEFT JOIN `'._DB_PREFIX_.'image_lang` il ON (i.`id_image` = il.`id_image` AND il.`id_lang` = '.(int)$id_lang.')
 				LEFT JOIN `'._DB_PREFIX_.'manufacturer` m ON (m.`id_manufacturer` = p.`id_manufacturer`)
 				LEFT JOIN `'._DB_PREFIX_.'product_tag` pt ON (p.`id_product` = pt.`id_product`)

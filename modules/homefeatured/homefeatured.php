@@ -104,7 +104,29 @@ class HomeFeatured extends Module
 		$category = new Category(Context::getContext()->shop->getCategory(), (int)Context::getContext()->language->id);
 		$nb = (int)(Configuration::get('HOME_FEATURED_NBR'));
 		$products = $category->getProducts((int)Context::getContext()->language->id, 1, ($nb ? $nb : 10));
-
+		/* Discount Patch */
+			$id_customer = (isset($this->context->customer) ? (int)$this->context->customer->id : 0);
+			$id_group = (isset($this->context->customer) ? $this->context->customer->id_default_group : _PS_DEFAULT_CUSTOMER_GROUP_);
+			$id_country = (int)$id_customer ? Customer::getCurrentCountry($id_customer) : Configuration::get('PS_COUNTRY_DEFAULT');
+			$id_currency = (int)$this->context->cookie->id_currency;
+			$id_shop = $this->context->shop->id;
+		
+			foreach ($products as $key => $product) {
+				
+				$prices_array = array();
+			
+				/* For each product, grab quantity discounts */
+				$quantity_discounts = SpecificPrice::getQuantityDiscounts($product['id_product'], $id_shop, $id_currency, $id_country, $id_group, null, true);
+				/* Process quantity discounts to get the real price */
+				
+				if ($quantity_discounts)
+				{
+					$products[$key]['quantity_discounts'] = $quantity_discounts;
+				
+				} // end if quantity discounts
+				$this->context->smarty->assign('products', $products);
+			}
+			/* Discount Patch */
 		$this->smarty->assign(array(
 			'products' => $products,
 			'add_prod_display' => Configuration::get('PS_ATTRIBUTE_CATEGORY_DISPLAY'),

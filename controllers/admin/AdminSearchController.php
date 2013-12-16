@@ -139,7 +139,7 @@ class AdminSearchControllerCore extends AdminController
 				/* Handle module name */
 				if ($searchType == 7 && Validate::isModuleName($this->query) AND ($module = Module::getInstanceByName($this->query)) && Validate::isLoadedObject($module))
 					Tools::redirectAdmin('index.php?tab=AdminModules&tab_module='.$module->tab.'&module_name='.$module->name.'&anchor=anchor'.ucfirst($module->name).'&token='.Tools::getAdminTokenLite('AdminModules'));
-				
+
 				/* Normal catalog search */
 				$this->searchModule();
 			}
@@ -179,7 +179,7 @@ class AdminSearchControllerCore extends AdminController
 	{
 		$this->_list['customers'] = Customer::searchByName($this->query);
 	}
-	
+
 	public function searchModule()
 	{
 		$this->_list['modules'] = array();

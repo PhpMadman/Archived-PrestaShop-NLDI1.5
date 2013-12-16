@@ -44,7 +44,15 @@ var homeslider_pause = {$homeslider.pause};
 <ul id="homeslider">
 {foreach from=$homeslider_slides item=slide}
 	{if $slide.active}
+		{if $slide.image == "podium_blur.jpg"}
+			{if $logged}
+				<li><a href="{$slide.url|escape:'htmlall':'UTF-8'}" title="{$slide.description|escape:'htmlall':'UTF-8'}"><img src="{$smarty.const._MODULE_DIR_}/toplist/podium.jpg" alt="{$slide.legend|escape:'htmlall':'UTF-8'}" legend="{$slide.description|escape:'htmlall':'UTF-8'}" height="{$homeslider.height|intval}" width="{$homeslider.width|intval}" /></a></li>
+			{else}
+			<li><img src="{$smarty.const._MODULE_DIR_}/toplist/{$slide.image|escape:'htmlall':'UTF-8'}" alt="{$slide.legend|escape:'htmlall':'UTF-8'}" legend="{$slide.description|escape:'htmlall':'UTF-8'}" height="{$homeslider.height|intval}" width="{$homeslider.width|intval}" /></li>
+			{/if}
+		{else}
 		<li><a href="{$slide.url|escape:'htmlall':'UTF-8'}" title="{$slide.description|escape:'htmlall':'UTF-8'}"><img src="{$smarty.const._MODULE_DIR_}/homeslider/images/{$slide.image|escape:'htmlall':'UTF-8'}" alt="{$slide.legend|escape:'htmlall':'UTF-8'}" legend="{$slide.description|escape:'htmlall':'UTF-8'}" height="{$homeslider.height|intval}" width="{$homeslider.width|intval}" /></a></li>
+		{/if}
 	{/if}
 {/foreach}
 </ul>

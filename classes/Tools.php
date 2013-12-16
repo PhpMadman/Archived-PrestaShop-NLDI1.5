@@ -378,7 +378,7 @@ class ToolsCore
 	{
 		if (!$context)
 			$context = Context::getContext();
-		
+
 		// Install call the dispatcher and so the switchLanguage
 		// Stop this method by checking the cookie
 		if (!isset($context->cookie))
@@ -977,10 +977,10 @@ class ToolsCore
 
 		// Remove all non-whitelist chars.
 		if (Configuration::get('PS_ALLOW_ACCENTED_CHARS_URL'))
-			$str = preg_replace('/[^a-zA-Z0-9\s\'\:\/\[\]-\pL]/u', '', $str);	
+			$str = preg_replace('/[^a-zA-Z0-9\s\'\:\/\[\]-\pL]/u', '', $str);
 		else
 			$str = preg_replace('/[^a-zA-Z0-9\s\'\:\/\[\]-]/','', $str);
-		
+
 		$str = preg_replace('/[\s\'\:\/\[\]-]+/', ' ', $str);
 		$str = str_replace(array(' ', '/'), '-', $str);
 
@@ -1540,10 +1540,10 @@ class ToolsCore
 			fwrite($write_fd, "\n# Disable Multiviews\nOptions -Multiviews\n\n");
 
 		fwrite($write_fd, "RewriteEngine on\n");
-	
+
 		if (!$medias)
 			$medias = array(_MEDIA_SERVER_1_, _MEDIA_SERVER_2_, _MEDIA_SERVER_3_);
-		
+
 		$media_domains = '';
 		if ($medias[0] != '')
 			$media_domains = 'RewriteCond %{HTTP_HOST} ^'.$medias[0].'$ [OR]'."\n";
@@ -1562,10 +1562,10 @@ class ToolsCore
 			{
 				fwrite($write_fd, 'RewriteCond %{HTTP_HOST} ^'.$domain.'$'."\n");
 				fwrite($write_fd, 'RewriteRule . - [E=REWRITEBASE:'.$uri['physical'].']'."\n");
-				
+
 				// Webservice
 				fwrite($write_fd, 'RewriteRule ^api/?(.*)$ %{ENV:REWRITEBASE}webservice/dispatcher.php?url=$1 [QSA,L]'."\n\n");
-				
+
 				$rewrite_settings = (int)Configuration::get('PS_REWRITING_SETTINGS', null, null, (int)$uri['id_shop']);
 				$domain_rewrite_cond = 'RewriteCond %{HTTP_HOST} ^'.$domain.'$'."\n";
 				// Rewrite virtual multishop uri
@@ -1682,7 +1682,7 @@ FileETag INode MTime Size
 
 		return true;
 	}
-	
+
 	public static function getDefaultIndexContent()
 	{
 		return '<?php
@@ -1721,7 +1721,7 @@ header("Pragma: no-cache");
 header("Location: ../");
 exit;
 ';
-		
+
 	}
 
 	/**
@@ -2083,7 +2083,7 @@ exit;
 	{
 		if (is_null($smarty))
 			$smarty = Context::getContext()->smarty;
-		
+
 		if (!$tpl && $cache_id === null && $compile_id === null)
 			return $smarty->clearAllCache();
 
@@ -2278,9 +2278,9 @@ exit;
 
 		return false;
 	}
-	
+
 	/**
-	 * Reproduce array_unique working before php version 5.2.9 
+	 * Reproduce array_unique working before php version 5.2.9
 	 * @param array $array
 	 * @return array
 	 */

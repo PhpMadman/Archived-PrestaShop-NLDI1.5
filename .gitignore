@@ -4,6 +4,7 @@
 .settings
 .idea
 .svn
+.bak
 .DS_Store
 .sass-cache
 *.sublime-project

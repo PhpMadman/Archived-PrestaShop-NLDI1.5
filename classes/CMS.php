@@ -30,11 +30,17 @@ class CMSCore extends ObjectModel
 	public $meta_title;
 	public $meta_description;
 	public $meta_keywords;
+	public $short_description;
 	public $content;
 	public $link_rewrite;
 	public $id_cms_category;
 	public $position;
 	public $active;
+	/** @var string Object creation date */
+// 	public $date_add;
+
+	/** @var string Object last modification date */
+// 	public $date_upd;
 
 	/**
 	 * @see ObjectModel::$definition
@@ -47,10 +53,13 @@ class CMSCore extends ObjectModel
 			'id_cms_category' => 	array('type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'),
 			'position' => 			array('type' => self::TYPE_INT),
 			'active' => 			array('type' => self::TYPE_BOOL),
+// 			'date_add' => 			array('type' => self::TYPE_DATE, 'validate' => 'isDate'),
+// 			'date_upd' => 			array('type' => self::TYPE_DATE, 'validate' => 'isDate'),
 
 			// Lang fields
 			'meta_description' => 	array('type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isGenericName', 'size' => 255),
 			'meta_keywords' => 		array('type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isGenericName', 'size' => 255),
+			'short_description' => 	array('type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isGenericName', 'size' => 255),
 			'meta_title' =>			array('type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isGenericName', 'required' => true, 'size' => 128),
 			'link_rewrite' => 		array('type' => self::TYPE_STRING, 'lang' => true, 'validate' => 'isLinkRewrite', 'required' => true, 'size' => 128),
 			'content' => 			array('type' => self::TYPE_HTML, 'lang' => true, 'validate' => 'isString', 'size' => 3999999999999),
@@ -202,7 +211,7 @@ class CMSCore extends ObjectModel
 		if ($id_cms_category)
 			$sql->where('c.id_cms_category = '.(int)$id_cms_category);
 
-		$sql->orderBy('position');
+		$sql->orderBy('position DESC');
 
 		return Db::getInstance()->executeS($sql);
 	}

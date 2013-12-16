@@ -1,7 +1,7 @@
 /* block CONTACT ******************************************************************************* */
 #contact_block .block_content {
 	padding:10px 0 15px 0;
-	background: url(images/block_contact_bg.jpg) no-repeat left bottom transparent
+	background: url(images/NL2_short_small.png) no-repeat left bottom transparent
 }
 
 #contact_block p {
@@ -16,14 +16,14 @@
 	line-height: auto
 }
 #contact_block p.tel {
-	margin:0 0 0 60px;
+	margin:0 0 0 70px;
 	padding-left: 26px;
 	font: bold 11px/20px Arial, Verdana, sans-serif;
 	background: url(images/block_contact_pict_tel.png) no-repeat 0 0 transparent
 }
 #contact_block a {
 	display:block;
-	margin-left:60px;
+	margin-left:70px;
 	padding:6px 8px;
 	font:bold 10px Arial,Verdana,sans-serif;
 	color:#fff;
@@ -32,7 +32,8 @@
 	-moz-border-radius:3px;
 	-webkit-border-radius:3px;
 	border-radius:3px;
-	background:url(images/bloc_contact_a_bg.png) repeat-x 0 0 #000
+	background:url(images/bloc_contact_a_bg.png) repeat-x 0 0 #000000;
+	width: 100px;
 }
 #contact_block a:hover {text-decoration:none}
 

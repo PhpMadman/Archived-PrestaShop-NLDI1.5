@@ -48,6 +48,37 @@ class SearchControllerCore extends FrontController
 			$this->display_footer = false;
 		}
 	}
+	
+	/**
+	 * Assign template vars related to page content
+	 * Adds quantity_discounts to products
+	 */
+	public function GetSearchProductQtyDiscounts($products) {
+	/* Discount Patch */
+		$id_customer = (isset($this->context->customer) ? (int)$this->context->customer->id : 0);
+		$id_group = (isset($this->context->customer) ? $this->context->customer->id_default_group : _PS_DEFAULT_CUSTOMER_GROUP_);
+		$id_country = (int)$id_customer ? Customer::getCurrentCountry($id_customer) : Configuration::get('PS_COUNTRY_DEFAULT');
+		$id_currency = (int)$this->context->cookie->id_currency;
+		$id_shop = $this->context->shop->id;
+	
+		foreach ($products as $key => $product) {
+		
+			$prices_array = array();
+		
+			/* For each product, grab quantity discounts */
+			$quantity_discounts = SpecificPrice::getQuantityDiscounts($product['id_product'], $id_shop, $id_currency, $id_country, $id_group, null, true);
+			/* Process quantity discounts to get the real price */
+			
+			if ($quantity_discounts)
+			{
+				$products[$key]['quantity_discounts'] = $quantity_discounts;
+			
+			} // end if quantity discounts
+			$this->context->smarty->assign('search_products', $products);
+		}
+		return $products;
+	/* Discount Patch */
+	}
 
 	/**
 	 * Assign template vars related to page content
@@ -92,9 +123,12 @@ class SearchControllerCore extends FrontController
 			Hook::exec('actionSearch', array('expr' => $query, 'total' => $search['total']));
 			$nbProducts = $search['total'];
 			$this->pagination($nbProducts);
+			$products = $search["result"];
+			$products = $this->GetSearchProductQtyDiscounts($search["result"]);
 			$this->context->smarty->assign(array(
-				'products' => $search['result'], // DEPRECATED (since to 1.4), not use this: conflict with block_cart module
-				'search_products' => $search['result'],
+// 				'products' => $search['result'], // DEPRECATED (since to 1.4), not use this: conflict with block_cart module
+// 				'search_products' => $search['result'],
+				'search_products' => $products,
 				'nbProducts' => $search['total'],
 				'search_query' => $query,
 				'homeSize' => Image::getSize(ImageType::getFormatedName('home'))));

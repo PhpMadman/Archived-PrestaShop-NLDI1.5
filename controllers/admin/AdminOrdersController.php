@@ -215,7 +215,7 @@ class AdminOrdersControllerCore extends AdminController
 					'desc' => $type,
 					'class' => 'process-icon-standardRefund'
 				);
-			
+
 			if ($order->hasInvoice() && !$this->lite_display)
 				$this->toolbar_btn['partial_refund'] = array(
 					'short' => 'Create',
@@ -303,7 +303,7 @@ class AdminOrdersControllerCore extends AdminController
 							'{id_order}' => $order->id,
 							'{order_name}' => $order->getUniqReference()
 						);
-						if (@Mail::Send((int)$order->id_lang, 'in_transit', Mail::l('Package in transit', (int)$order->id_lang), $templateVars,
+						if (Mail::Send((int)$order->id_lang, 'in_transit', Mail::l('Package in transit', (int)$order->id_lang), $templateVars,
 							$customer->email, $customer->firstname.' '.$customer->lastname, null, null, null, null,
 							_PS_MAIL_DIR_, true, (int)$order->id_shop))
 						{
@@ -576,15 +576,15 @@ class AdminOrdersControllerCore extends AdminController
 					$productList = Tools::getValue('id_order_detail');
 					if ($productList)
 						$productList = array_map('intval', $productList);
-					
+
 					$customizationList = Tools::getValue('id_customization');
 					if ($customizationList)
 						$customizationList = array_map('intval', $customizationList);
-						
+
 					$qtyList = Tools::getValue('cancelQuantity');
 					if ($qtyList)
 						$qtyList = array_map('intval', $qtyList);
-						
+
 					$customizationQtyList = Tools::getValue('cancelCustomizationQuantity');
 					if ($customizationQtyList)
 						$customizationQtyList = array_map('intval', $customizationQtyList);
@@ -647,7 +647,7 @@ class AdminOrdersControllerCore extends AdminController
 
 								if (!$order->hasBeenDelivered() || ($order->hasBeenDelivered() && Tools::isSubmit('reinjectQuantities')) && $qty_cancel_product > 0)
 									$this->reinjectQuantity($order_detail, $qty_cancel_product);
-								
+
 								// Delete product
 								$order_detail = new OrderDetail((int)$id_order_detail);
 								if (!$order->deleteProduct($order, $order_detail, $qtyCancelProduct))
@@ -901,7 +901,7 @@ class AdminOrdersControllerCore extends AdminController
 							'unit_price_tax_incl',
 							'unit_price_tax_excl',
 							'original_product_price'
-							
+
 						);
 						foreach ($fields as $field)
 							$order_detail->{$field} = Tools::convertPriceFull($order_detail->{$field}, $old_currency, $currency);
@@ -1298,17 +1298,38 @@ class AdminOrdersControllerCore extends AdminController
 		foreach ($products as &$product)
 		{
 			$product['current_stock'] = StockAvailable::getQuantityAvailableByProduct($product['product_id'], $product['product_attribute_id'], $product['id_shop']);
-			
+
 			$resume = OrderSlip::getProductSlipResume($product['id_order_detail']);
 			$product['quantity_refundable'] = $product['product_quantity'] - $resume['product_quantity'];
 			$product['amount_refundable'] = $product['total_price_tax_incl'] - $resume['amount_tax_incl'];
 			$product['amount_refund'] = Tools::displayPrice($resume['amount_tax_incl'], $currency);
 			$product['refund_history'] = OrderSlip::getProductSlipDetail($product['id_order_detail']);
 			$product['return_history'] = OrderReturn::getProductReturnDetail($product['id_order_detail']);
-			
+
 			// if the current stock requires a warning
 			if ($product['current_stock'] == 0 && $display_out_of_stock_warning)
 				$this->displayWarning($this->l('This product is out of stock: ').' '.$product['product_name']);
+		}
+		
+		// Package management for order
+		foreach($products as &$product) {
+			$pack_items = $product['cache_is_pack'] ? Pack::getItemTable($product['id_product'], $this->context->language->id, true) : array();
+			foreach($pack_items as &$pack_item)
+			{
+				$pack_item['current_stock'] = StockAvailable::getQuantityAvailableByProduct($pack_item['id_product'], $pack_item['id_product_attribute'], $pack_item['id_shop']);
+				$this->setProductImageInformations($pack_item);
+				if ($pack_item['image'] != null)
+				{
+					$name = 'product_mini_'.(int)$pack_item['id_product'].(isset($pack_item['id_product_attribute']) ? '_'.(int)$pack_item['id_product_attribute'] : '').'.jpg';
+					// generate image cache, only for back office
+					$pack_item['image_tag'] = ImageManager::thumbnail(_PS_IMG_DIR_.'p/'.$pack_item['image']->getExistingImgPath().'.jpg', $name, 45, 'jpg');
+					if (file_exists(_PS_TMP_IMG_DIR_.$name))
+						$pack_item['image_size'] = getimagesize(_PS_TMP_IMG_DIR_.$name);
+					else
+						$pack_item['image_size'] = false;
+				}
+			}
+			$product['pack_items'] = $pack_items;
 		}
 
 		// Smarty assign
@@ -1383,7 +1404,7 @@ class AdminOrdersControllerCore extends AdminController
 				$productObj = new Product((int)$product['id_product'], false, (int)$this->context->language->id);
 				$combinations = array();
 				$attributes = $productObj->getAttributesGroups((int)$this->context->language->id);
-				
+
 				// Tax rate for this customer
 				if (Tools::isSubmit('id_address'))
 					$product['tax_rate'] = $productObj->getTaxesRate(new Address(Tools::getValue('id_address')));
@@ -1427,7 +1448,7 @@ class AdminOrdersControllerCore extends AdminController
 				foreach ($combinations as &$combination)
 					$combination['attributes'] = rtrim($combination['attributes'], ' - ');
 				$product['combinations'] = $combinations;
-				
+
 				if ($product['customizable'])
 				{
 					$product_instance = new Product((int)$product['id_product']);
@@ -1563,7 +1584,7 @@ class AdminOrdersControllerCore extends AdminController
 		// Add product to cart
 		$update_quantity = $cart->updateQty($product_informations['product_quantity'], $product->id, isset($product_informations['product_attribute_id']) ? $product_informations['product_attribute_id'] : null,
 			isset($combination) ? $combination->id : null, 'up', 0, new Shop($cart->id_shop));
-			
+
 		if ($update_quantity < 0)
 		{
 			// If product has attribute, minimal quantity is set with minimal quantity of attribute
@@ -1572,7 +1593,7 @@ class AdminOrdersControllerCore extends AdminController
 		}
 		elseif (!$update_quantity)
 			die(Tools::jsonEncode(array('error' => Tools::displayError('You already have the maximum quantity available for this product.', false))));
-		
+
 		// If order is valid, we can create a new invoice or edit an existing invoice
 		if ($order->hasInvoice())
 		{
@@ -1673,7 +1694,7 @@ class AdminOrdersControllerCore extends AdminController
 		$order->total_paid += Tools::ps_round((float)($cart->getOrderTotal(true, $total_method)), 2);
 		$order->total_paid_tax_excl += Tools::ps_round((float)($cart->getOrderTotal(false, $total_method)), 2);
 		$order->total_paid_tax_incl += Tools::ps_round((float)($cart->getOrderTotal($use_taxes, $total_method)), 2);
-		
+
 		if (isset($order_invoice) && Validate::isLoadedObject($order_invoice))
 		{
 			$order->total_shipping = $order_invoice->total_shipping_tax_incl;
@@ -1727,7 +1748,7 @@ class AdminOrdersControllerCore extends AdminController
 			'link' => Context::getContext()->link,
 			'current_index' => self::$currentIndex
 		));
-		
+
 		$this->sendChangedNotification($order);
 
 		die(Tools::jsonEncode(array(
@@ -1741,19 +1762,19 @@ class AdminOrdersControllerCore extends AdminController
 			'discount_form_html' => $this->createTemplate('_discount_form.tpl')->fetch()
 		)));
 	}
-	
+
 	public function sendChangedNotification(Order $order = null)
 	{
 		if (is_null($order))
 			$order = new Order(Tools::getValue('id_order'));
-		
+
 		$data = array(
 			'{lastname}' => $order->getCustomer()->lastname,
 			'{firstname}' => $order->getCustomer()->firstname,
 			'{id_order}' => (int)$order->id,
 			'{order_name}' => $order->getUniqReference()
 		);
-		
+
 		Mail::Send(
 			(int)$order->id_lang,
 			'order_changed',
@@ -1888,10 +1909,10 @@ class AdminOrdersControllerCore extends AdminController
 		$old_quantity = $order_detail->product_quantity;
 
 		$order_detail->product_quantity = $product_quantity;
-		
+
 		// update taxes
 		$res &= $order_detail->updateTaxAmount($order);
-	
+
 		// Save order detail
 		$res &= $order_detail->update();
 		// Save order invoice
@@ -1942,7 +1963,7 @@ class AdminOrdersControllerCore extends AdminController
 			$view = $this->createTemplate('_customized_data.tpl')->fetch();
 		else
 			$view = $this->createTemplate('_product_line.tpl')->fetch();
-			
+
 		$this->sendChangedNotification($order);
 
 		die(Tools::jsonEncode(array(
@@ -2015,7 +2036,7 @@ class AdminOrdersControllerCore extends AdminController
 			'link' => Context::getContext()->link,
 			'current_index' => self::$currentIndex
 		));
-		
+
 		$this->sendChangedNotification($order);
 
 		die(Tools::jsonEncode(array(
@@ -2138,7 +2159,7 @@ class AdminOrdersControllerCore extends AdminController
 
 		return $products;
 	}
-	
+
 	protected function reinjectQuantity($order_detail, $qty_cancel_product)
 	{
 		// Reinject product
@@ -2165,7 +2186,7 @@ class AdminOrdersControllerCore extends AdminController
 						$quantity_to_reinject = $movement['physical_quantity'];
 
 					$left_to_reinject -= $quantity_to_reinject;
-										
+
 					$manager->addProduct(
 						$order_detail->product_id,
 						$order_detail->product_attribute_id,
@@ -2200,5 +2221,35 @@ class AdminOrdersControllerCore extends AdminController
 		$order_invoice->total_paid_tax_excl -= $value_tax_excl;
 		$order_invoice->update();
 	}
+
+	/**
+	 *
+	 * This method allow to add image information on a package detail
+	 * @param array &pack_item
+	 */
+	protected function setProductImageInformations(&$pack_item)
+	{
+		if (isset($pack_item['id_product']) && $pack_item['id_product'])
+			$id_image = Db::getInstance()->getValue('
+				SELECT image_shop.id_image
+				FROM '._DB_PREFIX_.'product_attribute_image pai'.
+				Shop::addSqlAssociation('image', 'pai', true).'
+				WHERE id_product_attribute = '.(int)$pack_item['id_product_attribute']);
+
+		if (!isset($id_image) || !$id_image)
+			$id_image = Db::getInstance()->getValue('
+				SELECT image_shop.id_image
+				FROM '._DB_PREFIX_.'image i'.
+				Shop::addSqlAssociation('image', 'i', true, 'image_shop.cover=1').'
+				WHERE id_product = '.(int)($pack_item['id_product'])
+			);
+
+		$pack_item['image'] = null;
+		$pack_item['image_size'] = null;
+
+		if ($id_image)
+			$pack_item['image'] = new Image($id_image);
+	}
+
 }
 

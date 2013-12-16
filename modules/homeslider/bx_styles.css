@@ -1,16 +1,16 @@
 /* @override http://localhost/bxslider_v3_plugin/css/styles.css */
 
 /*
- * To change the color scheme of slider change each 
+ * To change the color scheme of slider change each
  * background property for each of the five styles below
  */
 
 .bx-window {margin-bottom:20px;}
 .bx-wrapper {
 	margin-bottom:20px;
-	height:300px
+/* 	height:300px */
 }
- 
+
 /*next button*/
 .bx-next {
 	display:none;

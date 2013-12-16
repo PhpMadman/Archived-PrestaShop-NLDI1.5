@@ -46,7 +46,7 @@ class BlockStore extends Module
 	public function install()
 	{
 		Configuration::updateValue('BLOCKSTORE_IMG', 'store.jpg');
-		return parent::install() && $this->registerHook('rightColumn') && $this->registerHook('header');
+		return parent::install() && $this->registerHook('displayRightColumn') && $this->registerHook('header');
 	}
 
 	public function uninstall()
@@ -57,10 +57,10 @@ class BlockStore extends Module
 
 	public function hookLeftColumn($params)
 	{
-		return $this->hookRightColumn($params);
+		return $this->hookDisplayRightColumn($params);
 	}
 
-	public function hookRightColumn($params)
+	public function hookDisplayRightColumn($params)
 	{
 		$this->smarty->assign('store_img', Configuration::get('BLOCKSTORE_IMG'));
 		$sql = 'SELECT COUNT(*)

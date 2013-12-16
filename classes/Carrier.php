@@ -204,7 +204,7 @@ class CarrierCore extends ObjectModel
 		Carrier::cleanPositions();
 		return (Db::getInstance()->execute('DELETE FROM '._DB_PREFIX_.'cart_rule_carrier WHERE id_carrier = '.(int)$this->id) &&
 					$this->deleteTaxRulesGroup(Shop::getShops(true, null, true)));
-		
+
 	}
 
 	/**
@@ -934,7 +934,7 @@ class CarrierCore extends ObjectModel
 	{
 		return Carrier::getIdTaxRulesGroupByIdCarrier((int)$this->id, $context);
 	}
-	
+
 	public static function getIdTaxRulesGroupByIdCarrier($id_carrier, Context $context = null)
 	{
 		if (!$context)
@@ -946,7 +946,7 @@ class CarrierCore extends ObjectModel
 				SELECT `id_tax_rules_group`
 				FROM `'._DB_PREFIX_.'carrier_tax_rules_group_shop`
 				WHERE `id_carrier` = '.(int)$id_carrier.' AND id_shop='.(int)Context::getContext()->shop->id));
-			
+
 		return Cache::retrieve($key);
 	}
 
@@ -970,9 +970,9 @@ class CarrierCore extends ObjectModel
 			$shops = Shop::getContextListShopID();
 		else
 			$shops = Shop::getShops(true, null, true);
-			
+
 		$this->deleteTaxRulesGroup($shops);
-				
+
 		$values = array();
 		foreach ($shops as $id_shop)
 			$values[] = array(
@@ -1136,13 +1136,13 @@ class CarrierCore extends ObjectModel
 			$id_shop = Context::getContext()->shop->id;
 		if (is_null($cart))
 			$cart = Context::getContext()->cart;
-			
+
 		$id_address = (int)((!is_null($id_address_delivery) && $id_address_delivery != 0) ? $id_address_delivery :  $cart->id_address_delivery);
 		if ($id_address)
 		{
 			$address = new Address($id_address);
 			$id_zone = Address::getZoneById($address->id);
-			
+
 			// Check the country of the address is activated
 			if (!Address::isCountryActiveById($address->id))
 				return array();
@@ -1211,10 +1211,10 @@ class CarrierCore extends ObjectModel
 		}
 		return $carrier_list;
 	}
-	
+
 	/**
 	 * Assign one (ore more) group to all carriers
-	 * 
+	 *
 	 * @since 1.5.0
 	 * @param int|array $id_group_list group id or list of group ids
 	 * @param array $exception list of id carriers to ignore
@@ -1223,16 +1223,16 @@ class CarrierCore extends ObjectModel
 	{
 		if (!is_array($id_group_list))
 			$id_group_list = array($id_group_list);
-		
+
 		Db::getInstance()->execute('
 			DELETE FROM `'._DB_PREFIX_.'carrier_group`
 			WHERE `id_group` IN ('.join(',', $id_group_list).')');
-		
+
 		$carrier_list = Db::getInstance()->executeS('
 			SELECT id_carrier FROM `'._DB_PREFIX_.'carrier`
 			WHERE deleted = 0
 			'.(is_array($exception) ? 'AND id_carrier NOT IN ('.join(',', $exception).')' : ''));
-		
+
 		if ($carrier_list)
 		{
 			$data = array();
@@ -1246,7 +1246,7 @@ class CarrierCore extends ObjectModel
 			}
 			return Db::getInstance()->insert('carrier_group', $data, false, false, Db::INSERT);
 		}
-		
+
 		return true;
 	}
 }

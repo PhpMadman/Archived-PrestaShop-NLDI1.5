@@ -167,8 +167,8 @@ class CustomerCore extends ObjectModel
 			'ip_registration_newsletter' =>	array('type' => self::TYPE_STRING, 'copy_post' => false),
 			'optin' => 						array('type' => self::TYPE_BOOL, 'validate' => 'isBool'),
 			'website' =>					array('type' => self::TYPE_STRING, 'validate' => 'isUrl'),
-			'company' =>					array('type' => self::TYPE_STRING, 'validate' => 'isGenericName'),
-			'siret' =>						array('type' => self::TYPE_STRING, 'validate' => 'isSiret'),
+			'company' =>					array('type' => self::TYPE_STRING, 'validate' => 'isGenericName','required' => true),
+			'siret' =>						array('type' => self::TYPE_STRING, 'validate' => 'isGenericName','required' => true),
 			'ape' =>						array('type' => self::TYPE_STRING, 'validate' => 'isApe'),
 			'outstanding_allow_amount' =>	array('type' => self::TYPE_FLOAT, 'validate' => 'isFloat', 'copy_post' => false),
 			'show_public_prices' =>			array('type' => self::TYPE_BOOL, 'validate' => 'isBool', 'copy_post' => false),
@@ -197,10 +197,10 @@ class CustomerCore extends ObjectModel
 		$this->birthday = (empty($this->years) ? $this->birthday : (int)$this->years.'-'.(int)$this->months.'-'.(int)$this->days);
 		$this->secure_key = md5(uniqid(rand(), true));
 		$this->last_passwd_gen = date('Y-m-d H:i:s', strtotime('-'.Configuration::get('PS_PASSWD_TIME_FRONT').'minutes'));
-		
+
 		if ($this->newsletter && !Validate::isDate($this->newsletter_date_add))
 			$this->newsletter_date_add = date('Y-m-d H:i:s');
-			
+
 		if ($this->id_default_group == _PS_DEFAULT_CUSTOMER_GROUP_)
 			if ($this->is_guest)
 				$this->id_default_group = Configuration::get('PS_GUEST_GROUP');
@@ -223,7 +223,7 @@ class CustomerCore extends ObjectModel
 			$this->newsletter_date_add = date('Y-m-d H:i:s');
 		if (Context::getContext()->controller->controller_type == 'admin')
 			$this->updateGroup($this->groupBox);
-			
+
 		if ($this->deleted)
 		{
 			$addresses = $this->getAddresses((int)Configuration::get('PS_LANG_DEFAULT'));
@@ -250,10 +250,10 @@ class CustomerCore extends ObjectModel
 		}
 		Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'customer_group` WHERE `id_customer` = '.(int)$this->id);
 		Db::getInstance()->execute('DELETE FROM '._DB_PREFIX_.'message WHERE id_customer='.(int)$this->id);
-		Db::getInstance()->execute('DELETE FROM '._DB_PREFIX_.'specific_price WHERE id_customer='.(int)$this->id);		
+		Db::getInstance()->execute('DELETE FROM '._DB_PREFIX_.'specific_price WHERE id_customer='.(int)$this->id);
 		Db::getInstance()->execute('DELETE FROM '._DB_PREFIX_.'compare WHERE id_customer='.(int)$this->id);
-				
-		$carts = Db::getInstance()->executes('SELECT id_cart 
+
+		$carts = Db::getInstance()->executes('SELECT id_cart
 															FROM '._DB_PREFIX_.'cart
 															WHERE id_customer='.(int)$this->id);
 		if ($carts)
@@ -262,8 +262,8 @@ class CustomerCore extends ObjectModel
 				Db::getInstance()->execute('DELETE FROM '._DB_PREFIX_.'cart WHERE id_cart='.(int)$cart['id_cart']);
 				Db::getInstance()->execute('DELETE FROM '._DB_PREFIX_.'cart_product WHERE id_cart='.(int)$cart['id_cart']);
 			}
-		
-		$cts = Db::getInstance()->executes('SELECT id_customer_thread 
+
+		$cts = Db::getInstance()->executes('SELECT id_customer_thread
 															FROM '._DB_PREFIX_.'customer_thread
 															WHERE id_customer='.(int)$this->id);
 		if ($cts)
@@ -378,7 +378,7 @@ class CustomerCore extends ObjectModel
 			else
 				return false;
 		}
-		
+
 		$sql = 'SELECT `id_customer`
 				FROM `'._DB_PREFIX_.'customer`
 				WHERE `email` = \''.pSQL($email).'\'
@@ -431,7 +431,7 @@ class CustomerCore extends ObjectModel
 				LEFT JOIN `'._DB_PREFIX_.'country` c ON (a.`id_country` = c.`id_country`)
 				LEFT JOIN `'._DB_PREFIX_.'country_lang` cl ON (c.`id_country` = cl.`id_country`)
 				LEFT JOIN `'._DB_PREFIX_.'state` s ON (s.`id_state` = a.`id_state`)
-				'.(Context::getContext()->shop->getGroup()->share_order ? '' : Shop::addSqlAssociation('country', 'c')).' 
+				'.(Context::getContext()->shop->getGroup()->share_order ? '' : Shop::addSqlAssociation('country', 'c')).'
 				WHERE `id_lang` = '.(int)$id_lang.' AND `id_customer` = '.(int)$this->id.' AND a.`deleted` = 0';
 		return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
 	}

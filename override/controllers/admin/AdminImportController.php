@@ -2,6 +2,5 @@
 
 class AdminImportController extends AdminImportControllerCore
 {
-
 }
 
