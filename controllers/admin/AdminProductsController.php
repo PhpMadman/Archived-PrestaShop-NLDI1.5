@@ -171,7 +171,12 @@ class AdminProductsControllerCore extends AdminController
 		LEFT JOIN `'._DB_PREFIX_.'stock_available` sav ON (sav.`id_product` = a.`id_product` AND sav.`id_product_attribute` = 0
 		'.StockAvailable::addSqlShopRestriction(null, null, 'sav').') ';
 		$this->_select .= 'cl.name `name_category` '.($join_category ? ', cp.`position`' : '').', '.$alias_image.'.`id_image`, '.$alias.'.`price`, 0 AS price_final, sav.`quantity` as sav_quantity, '.$alias.'.`active`';
-			
+
+		$this->_join .= 'LEFT JOIN `'._DB_PREFIX_.'warehouse_product_location` wpl ON (wpl.`id_product` = a.`id_product`)
+		LEFT JOIN `'._DB_PREFIX_.'warehouse` wh ON (wpl.`id_warehouse` = wh.`id_warehouse`)';
+		$this->_select .= ',wh.name as warehouse';
+		$this->_select .= ',a.`reference` as reference'; // This must be forced as warehouse contains a reference field.
+
 		$this->fields_list = array();
 		$this->fields_list['id_product'] = array(
 			'title' => $this->l('ID'),
@@ -194,7 +199,8 @@ class AdminProductsControllerCore extends AdminController
 		$this->fields_list['reference'] = array(
 			'title' => $this->l('Reference'),
 			'align' => 'left',
-			'width' => 80
+			'width' => 80,
+			'filter_key' => 'a!reference',
 		);
 
 		if (Shop::isFeatureActive() && Shop::getContext() != Shop::CONTEXT_SHOP)
@@ -209,6 +215,11 @@ class AdminProductsControllerCore extends AdminController
 				'width' => 230,
 				'filter_key' => 'cl!name',
 			);
+		$this->fields_list['warehouse'] = array(
+			'title' => $this->l('Warehouse'),
+			'width' => 200,
+			'filter_key' => 'wh!name',
+		);
 		$this->fields_list['price'] = array(
 			'title' => $this->l('Base price'),
 			'width' => 90,

@@ -345,16 +345,28 @@ var fieldRequired = '{l s='Please fill in all required fields, then save the cus
 			<p id="availability_statut"{if ($product->quantity <= 0 && !$product->available_later && $allow_oosp) OR ($product->quantity > 0 && !$product->available_now) OR !$product->available_for_order OR $PS_CATALOG_MODE} style="display: none;"{/if}>
 				<span id="availability_label">{l s='Availability:'}</span>
 				<span id="availability_value"{if $product->quantity <= 0} class="warning_inline"{/if}>
-				{if $product->quantity <= 0}{if $allow_oosp}{$product->available_later}{else}{l s='This product is no longer in stock'}{/if}{else}{$product->available_now}{/if}
+				{if $product->quantity <= 0}
+					{if $allow_oosp}
+						{$product->available_later}
+					{else}
+						{l s='This product is no longer in stock'}
+					{/if}
+				{else}
+					{$product->available_now}
+				{/if}
 				</span>
 			</p>
 
 			<!-- number of item in stock -->
 			{if ($display_qties == 1 && !$PS_CATALOG_MODE && $product->available_for_order)}
-			<p id="pQuantityAvailable"{if $product->quantity <= 0} style="display: none;"{/if}>
-				<span id="quantityAvailable">{$product->quantity|intval}</span>
-				<span {if $product->quantity > 1} style="display: none;"{/if} id="quantityAvailableTxt">{l s='item in stock'}</span>
-				<span {if $product->quantity == 1} style="display: none;"{/if} id="quantityAvailableTxtMultiple">{l s='items in stock'}</span>
+			<p id="pQuantityAvailable" style="{if $product->quantity <= 0} display: none;{/if}font-size:14px;font-weight:bold;">
+				{$color = '#000000'}
+				{if $product->quantity >= 20}{$color='#000010'}
+				{elseif $product->quantity >= 10}{$color='#000010'}
+				{/if}
+				<span id="quantityAvailable" style="color:{$color};">{$product->quantity|intval}</span>
+				<span style="{if $product->quantity > 1}display: none;{/if}color:{$color};" id="quantityAvailableTxt">{l s='item in stock'}</span>
+				<span style="{if $product->quantity == 1}display: none;{/if}color:{$color};" id="quantityAvailableTxtMultiple">{l s='items in stock'}</span>
 			</p>
 			{/if}
 
@@ -476,7 +488,6 @@ var fieldRequired = '{l s='Please fill in all required fields, then save the cus
 					</p>
 				{/if}
 					<div style="margin-top:40px;">
-<!-- 						<strong style="font-size:14px;color:#ff0000;">{$stock|escape:'htmlall':'UTF-8'}</strong><br> -->
 						{if $deliver}
 						<strong>{l s='Delivery time'}: {$deliver|escape:'htmlall':'UTF-8'}</strong>
 						{/if}
@@ -529,16 +540,12 @@ var fieldRequired = '{l s='Please fill in all required fields, then save the cus
 								<td style="padding-left:20px;" class="padded">{$quantity_discount.quantity|intval}</td>
 								<td class="padded">
 								{if $quantity_discount.price >= 0 OR $quantity_discount.reduction_type == 'amount'}
-<!-- 										{convertPrice price=$quantity_discount.price|floatval} -->
-										{$newPrice = $productPrice-$quantity_discount.reduction}
-										{convertPrice price=$newPrice|floatval}
-<!-- 										{convertPrice price=$quantity_discount.reduction|floatval} -->
+									{$newPrice = $productPrice-$quantity_discount.reduction}
+									{convertPrice price=$newPrice|floatval}
 								{else}
-<!-- 									{print_r($quantity_discount)} -->
 									{$disPrice = $productPrice*$quantity_discount.reduction|floatval}
 									{$newPrice = $productPrice-round($disPrice,1)}
 									{convertPrice price=$newPrice|floatval}
-<!-- 									{$quantity_discount.real_value|floatval}% -->
 								{/if}
 								</td>
 							</tr>

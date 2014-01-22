@@ -96,12 +96,8 @@
 					{if isset($product.available_for_order) && $product.available_for_order && !isset($restricted_country_mode)}
 						{if isset($product.pack_quantity)}
 							<span class="availability">&nbsp;</span>
-						{elseif ($product.allow_oosp || $product.quantity > 0)}
-							{if $stock && ($stock == "Slut i lager" || $stock == "Out of stock")}
-								<span class="availability">&nbsp;</span>
-							{else}
+						{elseif ($product.quantity > 0)}
 								<span class="availability">{l s='Available'}</span>
-							{/if}
 						{elseif (isset($product.quantity_all_versions) && $product.quantity_all_versions > 0)}
 							<span class="availability">{l s='Product available with different options'}</span>
 						{else}

@@ -27,9 +27,25 @@
 	<h4 class="title_block">{l s='Contact us' mod='blockcontact'}</h4>
 	<div class="block_content clearfix">
 			<p>Kontakta vår kundtjänst</p>
-			{if $telnumber != ''}<p class="tel"><span class="label">{l s='Phone:' mod='blockcontact'}</span>{$telnumber|escape:'htmlall':'UTF-8'}<span style="font-size:12px;"><br>Öppetider: 10-18</span></p>{/if}
-<!-- 			{if $email != ''}<a href="mailto:{$email|escape:'htmlall':'UTF-8'}">Kontakt oss direkt via hemsidan</a>{/if} -->
-			{if $email != ''}<a href="skype:{$email|escape:'htmlall':'UTF-8'}?chat" style="font-size:9px; display:block; height:10px;margin-bottom: 2px;" >Skype Anton - NL Distribution</a>{/if}
+			{if $telnumber != ''}
+				<p class="tel">
+					<span class="label">{l s='Phone:' mod='blockcontact'}</span>{$telnumber|escape:'htmlall':'UTF-8'}
+					<span style="font-size:12px;"><br>Öppetider: 10-18</span>
+				</p>
+			{/if}
+			<!--
+			<p>
+				<span style="font-size:14px;font-weight:bold;"><br>
+				Öppettider Jul & Nyår: <br>
+				27 Dec: 9-16<br>
+				30 Dec: 9-16<br>
+				2 Jan: 9-17<br><br>
+				</span>
+			</p>
+			-->
+			{if $email != ''}
+				<a href="skype:{$email|escape:'htmlall':'UTF-8'}?chat" style="font-size:9px; display:block; height:10px;margin-bottom: 2px;" >Skype Anton - NL Distribution</a>
+			{/if}
 			<a href="/kontakta-oss" style="font-size:9px; display:block; height:10px;margin-bottom: 2px;" >{l s='Contact our hotline' mod='blockcontact'}</a>
 	</div>
 </div>
