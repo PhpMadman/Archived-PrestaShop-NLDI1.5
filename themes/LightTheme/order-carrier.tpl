@@ -130,6 +130,7 @@
 			</h3>
 			<div class="delivery_options">
 			{foreach $option_list as $key => $option}
+				{if count($option.carrier_list) == 1}
 				<div class="delivery_option {if ($option@index % 2)}alternate_{/if}item">
 					<input class="delivery_option_radio" type="radio" name="delivery_option[{$id_address}]" onchange="{if $opc}updateCarrierSelectionAndGift();{else}updateExtraCarrier('{$key}', {$id_address});{/if}" id="delivery_option_{$id_address}_{$option@index}" value="{$key}" {if isset($delivery_option[$id_address]) && $delivery_option[$id_address] == $key}checked="checked"{/if} />
 					<label for="delivery_option_{$id_address}_{$option@index}">
@@ -154,27 +155,11 @@
 										<div class="delivery_option_delay">{$carrier.instance->delay[$cookie->id_lang]}</div>
 									{/if}
 								{/if}
-<!-- Disable crappy is best time text
-								{if count($option_list) > 1}
-									{if $option.is_best_grade}
-										{if $option.is_best_price}
-										<div class="delivery_option_best delivery_option_icon">{l s='The best price and speed'}</div>
-										{else}
-										<div class="delivery_option_fast delivery_option_icon">{l s='The fastest'}</div>
-										{/if}
-									{else}
-										{if $option.is_best_price}
-										<div class="delivery_option_best_price delivery_option_icon">{l s='The best price'}</div>
-										{/if}
-									{/if}
-								{/if}
-								-->
 								</td>
 								<td>
 								<div class="delivery_option_price">
 									{if $option.total_price_with_tax && !$free_shipping}
 										{if $use_taxes == 1}
-<!-- 											{convertPrice price=$option.total_price_with_tax} {l s='(tax incl.)'} -->
 											{convertPrice price=$option.total_price_without_tax} {l s='(tax excl.)'}
 										{else}
 											{convertPrice price=$option.total_price_without_tax} {l s='(tax excl.)'}
@@ -219,6 +204,7 @@
 						</table>
 					</label>
 				</div>
+				{/if}
 			{/foreach}
 			</div>
 			<div class="hook_extracarrier" id="HOOK_EXTRACARRIER_{$id_address}">{if isset($HOOK_EXTRACARRIER_ADDR) &&  isset($HOOK_EXTRACARRIER_ADDR.$id_address)}{$HOOK_EXTRACARRIER_ADDR.$id_address}{/if}</div>
